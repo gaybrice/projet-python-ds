@@ -1,0 +1,479 @@
+VARIABLES_label_fr	VARIABLES	UNIT_label_fr
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre d'entreprises
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre d'établissements dans le commerce et la réparation automobile
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre d'emplois (lieu de travail)
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre de créations d'établissements
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre de créations d'établissements dans le commerce et la réparation automobile
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre d'entreprises dans le commerce et la réparation automobile
+Activité économique agrégée en 5 postes (NA, 2008)	NA5	Nombre d'établissements
+Activité économique agrégée en 5 postes (NA, 2008) - Catégorie socioprofessionnelle détaillée (29 postes) - Sexe	NA5-CS3_29-SEXE	Nombre d'emplois (lieu de travail)
+Activité économique agrégée en 5 postes (NA, 2008) - Catégorie socioprofessionnelle détaillée (31 postes) - Sexe	NA5-CS3_31-SEXE	Nombre d'emplois (lieu de travail)
+Activité économique agrégée en 5 postes (NA, 2008) - Catégorie socioprofessionnelle regroupée (6 postes) - Sexe	NA5-CS1_6-SEXE	Nombre d'emplois (lieu de travail)
+Activité économique agrégée en 5 postes (NA, 2008) - Effectif salarié regroupé en 5 tranches, de 0 salarié à 50 salariés et plus	NA5-EFFECSAL5T_0_50P	Nombre d'établissements
+Activité économique agrégée en 5 postes (NA, 2008) - Effectif salarié regroupé en 5 tranches, de 1 salarié à 100 salariés et plus	NA5-EFFECSAL5T_1_100P	Postes salariés dans les établissements
+Activité économique agrégée en 5 postes (NA, 2008) - Entreprise individuelle	NA5-ENTR_INDIVIDUELLE	Nombre de créations d'entreprises
+Activité économique en 10 postes, hors AZ (NA - A10)	NA10_HORS_AZ	Nombre de créations d'établissements
+Activité économique en 10 postes, hors AZ (NA - A10)	NA10_HORS_AZ	Nombre d'établissements
+Activité économique en 10 postes, hors AZ (NA - A10)	NA10_HORS_AZ	Nombre d'entreprises
+Activité économique en 10 postes, hors AZ (NA - A10) - Entreprise individuelle	NA10_HORS_AZ-ENTR_INDIVIDUELLE	Nombre de créations d'entreprises
+Activité économique en 17 postes (NA - A17)	NA17	Postes salariés dans les établissements
+Activité économique en 17 postes (NA - A17)	NA17	Nombre d'établissements
+Activité économique en 5 postes, nouvelle répartition	NA5_B	Nombre d'entreprises
+Activité économique en 5 postes, nouvelle répartition	NA5_B	Nombre d'établissements
+Activité économique en 5 postes, nouvelle répartition	NA5_B	Nombre de créations d'établissements
+Activité économique en 5 postes, nouvelle répartition - Entreprise individuelle	NA5_B-ENTR_INDIVIDUELLE	Nombre de créations d'entreprises
+Ancienneté d'emménagement du ménage	ANEMR2	Nombre de logements
+Ancienneté d'emménagement du ménage - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	ANEMR2-CS1_8-TYPLR	Nombre de logements
+Ancienneté d'emménagement du ménage - Nombre de pièces - Type de logement	ANEMR2-NBPIR-TYPLR	Nombre de logements
+Ancienneté d'emménagement du ménage - Statut d'occupation du logement - Type de logement	ANEMR2-STOCD-TYPLR	Nombre de logements
+Ancienneté d'emménagement du ménage regoupée	ANEMR3	Nombre de pièces
+Ancienneté d'emménagement du ménage regoupée	ANEMR3	Population
+Ancienneté d'emménagement du ménage regoupée	ANEMR3	Nombre de logements
+Ancienneté de l'entreprise, regroupée	ANCENTRR	Nombre d'entreprises
+Aspect du bâti (Dom)	BATI	Nombre de logements
+Bain ou douche - WC à l'intérieur	BAIN99-WC99	Nombre de logements
+Bain ou douche et WC à l'intérieur	BAINWC	Nombre de logements
+Catégorie de logement - Nombre de pièces - Type de logement	CATL-NBPIR-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement de la construction (regroupée en 3 tranches) - Type de logement	CATL-ACHLR3T-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement de la construction - Type de logement	CATL-ACHLR2-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL18-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL15-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL16-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL17-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL19-TYPLR	Nombre de logements
+Catégorie de logement - Période d'achèvement du logement - Type de logement	CATL-ACHL20-TYPLR	Nombre de logements
+Catégorie socioprofessionnelle détaillée (24 postes) - Lieu de résidence 1 an auparavant regroupé en 4 classes	CS2_24-IRANR_4	Population
+Catégorie socioprofessionnelle détaillée (24 postes) - Lieu de résidence 5 ans auparavant	CS2_24-IRANR	Population
+Catégorie socioprofessionnelle regroupée (6 postes)	CS1_6	Nombre d'emplois (lieu de travail)
+Catégorie socioprofessionnelle regroupée (6 postes) - Activité économique agrégée en 5 postes (NA, 2008) - Sexe	CS1_6-NA5-SEXE	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Activité économique en 17 postes (NA - A17) - Sexe	CS1_6-NA17-SEXE	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Sexe	CS1_6-SEXE	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Type d'activité	CS1_6-TACTR_2	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Type d'activité regroupé 99 (avec militaires du contingent)	CS1_6-TACTR99_2	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Âge quinquennal de 15 ans à 65 ans ou plus - Sexe	CS1_6-AGEQ65-SEXE	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus	CS1_6-AGEACT6_B	Population
+Catégorie socioprofessionnelle regroupée (6 postes) - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Sexe	CS1_6-AGEACT6_B-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes)	CS1_8	Population
+Catégorie socioprofessionnelle regroupée (8 postes)	CS1_8	Nombre de logements
+Catégorie socioprofessionnelle regroupée (8 postes) - Indicateur de nationalité condensé (Français/Étranger) - Sexe	CS1_8-INATC-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Lieu de résidence 1 an auparavant regroupé en 4 classes	CS1_8-IRANR_4	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Nationalité détaillée (13 postes)	CS1_8-NAT13	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Pays de naissance (11 postes) - Sexe	CS1_8-PNAI12_A-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Sexe	CS1_8-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Âge quinquennal de 15 ans à 65 ans ou plus - Sexe	CS1_8-AGEQ65-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus	CS1_8-AGEACT6_B	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Sexe	CS1_8-AGEACT6_B-SEXE	Population
+Catégorie socioprofessionnelle regroupée (8 postes) - Âge regroupé lié à des problématiques d'emploi	CS1_8-AGEREMPLOI	Population
+Chauffage central du logement (France métropolitaine)	CHFL	Nombre de logements
+Chauffage central du logement (France métropolitaine) - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	CHFL-CS1_8-TYPLR	Nombre de logements
+Chauffage central du logement (France métropolitaine) - Nombre de pièces - Type de logement	CHFL-NBPIR-TYPLR	Nombre de logements
+Chauffage central du logement (France métropolitaine) - Statut d'occupation du logement - Type de logement	CHFL-STOCD-TYPLR	Nombre de logements
+Chauffe-eau solaire	CHOS	Nombre de logements
+Combustible principal du logement (en France métropolitaine) - Nombre de pièces - Type de logement	CMBL-NBPIR-TYPLR	Nombre de logements
+Combustible principal du logement (en France métropolitaine) - Statut d'occupation du logement - Type de logement	CMBL-STOCD-TYPLR	Nombre de logements
+Conditions d'emploi - Sexe	EMPL-SEXE	Population
+Diplôme regroupé	DIPL_R	Population
+Disponibilité en eau et électricité (Dom) - Nombre de personnes du ménage - Aspect du bâti (Dom)	EAUELEC-NPERC-BATI	Nombre de logements
+Eau chaude dans le logement	EAUCHAUDE	Nombre de logements
+Effectif salarié regroupé en 5 tranches, de 0 salarié à 50 salariés et plus	EFFECSAL5T_0_50P	Nombre d'établissements dans le commerce et la réparation automobile
+Effectif salarié regroupé en 5 tranches, de 1 salarié à 100 salariés et plus	EFFECSAL5T_1_100P	Postes salariés dans les établissements du commerce et de la réparation automobile
+Emplacement réservé de stationnement	GARL	Nombre de logements
+Emplacement réservé de stationnement - Nombre de pièces - Type de logement	GARL-NBPIR-TYPLR	Nombre de logements
+Emplacement réservé de stationnement - Statut d'occupation du logement - Type de logement	GARL-STOCD-TYPLR	Nombre de logements
+Employeurs de salariés hors assistantes maternelles	INDICS_FLORES_AUTRES	Nombre d'établissements
+Employeurs d’assistantes maternelles	INDICS_FLORES_ASSMAT	Nombre d'établissements
+Entreprise individuelle	ENTR_INDIVIDUELLE	Nombre de créations d'entreprises dans le commerce et la réparation automobile
+Entreprise individuelle	ENTR_INDIVIDUELLE	Nombre de créations d'entreprises
+Existence d'au moins une pièce climatisée (Dom)	CLIM	Nombre de logements
+Existence d'au moins une pièce climatisée (Dom) - Nombre de pièces - Type de logement	CLIM-NBPIR-TYPLR	Nombre de logements
+Hébergement collectif, hors hôtel et camping	HEBCOLL_SANS_HOTCPG	Nombre de places lit
+Hébergement collectif, hors hôtel et camping	HEBCOLL_SANS_HOTCPG	Nombre d'hébergements collectifs
+Hébergement collectif, hors hôtel et camping	HEBCOLL_SANS_HOTCPG	Nombre d'unités d'hébergements
+Indicateur de nationalité condensé (Français/Étranger) - Sexe - Âge en 4 classes de 1 an à 80 ans ou plus - Lieu de résidence 1 an auparavant regroupé en 4 classes	INATC-SEXE-AGE4_B-IRANR_4	Population
+Indicateur de nationalité condensé (Français/Étranger) - Sexe - Âge en 8 classes de 1 an à 80 ans ou plus - Lieu de résidence 1 an auparavant regroupé en 4 classes	INATC-SEXE-AGEMEN8_C-IRANR_4	Population
+Indicateur de nationalité condensé (Français/Étranger) - Sexe - Âge en 8 classes de 1 an à 80 ans ou plus - Lieu de résidence 5 ans auparavant	INATC-SEXE-AGEMEN8_C-IRANR	Population
+Indicateur de nationalité condensé (Français/Étranger) - Sexe - Âge regroupé en 8 tranches des 5 ans ou plus jusqu'à 80 ans ou plus - Lieu de résidence 5 ans auparavant	INATC-SEXE-AGEMEN8_B-IRANR	Population
+Indicateur de revenus disponibles	INDICS_FILO_DISP	Nombre de personnes fiscales
+Indicateur de revenus disponibles	INDICS_FILO_DISP	Nombre de ménages fiscaux
+Indicateur de revenus disponibles	INDICS_FILO_DISP	Médiane du niveau de vie
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Neuvième décile du niveau de vie
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Rapport interdécile 9e décile/1er décile
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Taux de pauvreté
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des salaires ou traitements hors indemnités de chômage
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Premier décile du niveau de vie
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des prestations logement
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Pensions, retraites, et rentes
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des revenus du patrimoine et des autres revenus
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part de l'ensemble des prestations sociales
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des prestations familiales
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des minima sociaux
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des impôts
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Revenus des activités non salariées
+Indicateur de revenus disponibles détaillés	INDICS_FILO_DISP_DET	Part des indemnités de chômage
+Indicateur de revenus disponibles détaillés - Tranche d'âge du référent fiscal	INDICS_FILO_DISP_DET-TRAGERF	Taux de pauvreté
+Indicateur de revenus disponibles détaillés - Type d'occupation du logement regroupé	INDICS_FILO_DISP_DET-OCCTYPR	Taux de pauvreté
+Indicateur de revenus déclarés détaillés	INDICS_FILO_DEC_DET	Part des ménages fiscaux imposés
+Indicateurs de la source Tourisme	INDICS_TOURISME	Nombre d'hôtels
+Indicateurs de la source Tourisme	INDICS_TOURISME	Nombre de chambres des hôtels
+Indicateurs des populations légales	IND_POPLEGALES	Population municipale
+Indicateurs des populations légales	IND_POPLEGALES	Population comptée à part
+Indicateurs des populations légales	IND_POPLEGALES	Population totale
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1999 à 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2009 à 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1999 à 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1999 à 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1975 à 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2010 à 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2009 à 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1982 à 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2010 à 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1999 à 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2014
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2009
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2013
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 1968
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2018
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2008
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1990 à 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1968 à 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2008 à 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2012 à 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2007 à 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1999 à 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2011 à 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2006 à 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2011 à 2015
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2006 à 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2010
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1999 à 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2012 à 2016
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 1999 à 2006
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2013 à 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1968 à 1975
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1975 à 1982
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1982 à 1990
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1990 à 1999
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 1999 à 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2008 à 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Décès de 2013 à 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Naissances de 2007 à 2011
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences principales 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Superficie
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Population des résidences principales 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2017
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2012
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements vacants 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de logements en 2007
+Indicateurs issus de la Base des Données Communales	INDICS_BDCOM	Nombre de résidences secondaires et occasionnelles 2017
+Indicateurs issus de état civil	INDICS_ETATCIVIL	Nombre de naissances
+Indicateurs issus de état civil	INDICS_ETATCIVIL	Nombre de décès
+Installations sanitaires (Dom) - Nombre de personnes du ménage - Aspect du bâti (Dom)	SANIDOM-NPERC-BATI	Nombre de logements
+Installations sanitaires (Dom) - Nombre de pièces - Type de logement	SANIDOM-NBPIR-TYPLR	Nombre de logements
+Installations sanitaires (Dom) - Statut d'occupation du logement - Type de logement	SANIDOM-STOCD-TYPLR	Nombre de logements
+Installations sanitaires (France métropolitaine)	SANI	Nombre de logements
+Installations sanitaires (France métropolitaine) - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	SANI-CS1_8-TYPLR	Nombre de logements
+Installations sanitaires (France métropolitaine) - Nombre de pièces - Type de logement	SANI-NBPIR-TYPLR	Nombre de logements
+Installations sanitaires (France métropolitaine) - Statut d'occupation du logement - Type de logement	SANI-STOCD-TYPLR	Nombre de logements
+Lieu de résidence - Mode de transport - Sexe	ILTDUU4-TRANS-SEXE	Population
+Lieu de résidence - Mode de transport - Sexe	ILTDUU4-TRANS_19-SEXE	Population
+Lieu de résidence 5 ans auparavant regroupé	IRANR_2	Population
+Lieu de résidence 5 ans auparavant regroupé - Âge en 4 classes de 5 ans à 55 ans ou plus	IRANR_2-AGE5_55	Population
+Lieu de résidence très regroupé des personnes résidant dans un autre logement 5 ans auparavant - Âge en 4 classes de 5 ans à 55 ans ou plus	IRANC-AGE5_55	Population
+Lieu de travail	ILTR	Population
+Lieu de travail (géographie urbaine) - Mode de transport - Sexe	ILTDUU-TRANS-SEXE	Population
+Lieu de travail - Activité économique agrégée en 5 postes (NA, 2008) - Sexe	ILTR-NA5-SEXE	Population
+Lieu de travail - Activité économique agrégée en 5 postes (NA, 2008) - Sexe	ILTR2-NA5-SEXE	Population
+Lieu de travail - Catégorie socioprofessionnelle détaillée (18 postes) - Sexe	ILTR-CS2_18-SEXE	Population
+Lieu de travail - Catégorie socioprofessionnelle détaillée (18 postes) - Sexe	ILTR2-CS2_18-SEXE	Population
+Lieu de travail - Catégorie socioprofessionnelle regroupée (6 postes) - Sexe	ILTR-CS1_6-SEXE	Population
+Lieu de travail - Catégorie socioprofessionnelle regroupée (6 postes) - Sexe	ILTR2-CS1_6-SEXE	Population
+Lieu de travail - Mode de transport - Sexe	ILTR-TRANS-SEXE	Population
+Lieu de travail - Mode de transport - Sexe	ILTR2-TRANS-SEXE	Population
+Lieu de travail - Mode de transport - Sexe	ILTR2-TRANS_19-SEXE	Population
+Lieu de travail - Âge quinquennal de 15 ans à 65 ans ou plus - Sexe	ILTR2-AGEQ65-SEXE	Population
+Lieu de travail - Âge quinquennal de 15 ans à 65 ans ou plus - Sexe	ILTR-AGEQ65-SEXE	Population
+Lieu de travail - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Sexe	ILTR-AGEACT6_B-SEXE	Population
+Lieu de travail - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Sexe	ILTR2-AGEACT6_B-SEXE	Population
+Mode d'évacuation des eaux usées (Dom) - Nombre de personnes du ménage - Aspect du bâti (Dom)	EGOUL-NPERC-BATI	Nombre de logements
+Mode de cohabitation - Âge quinquennal jusqu'à 80 ans ou plus - Sexe	MOCO-AGEQ80_17-SEXE	Population
+Mode de cohabitation - Âge regroupé en 8 tranches, de moins de 15 ans jusqu'à 80 ans ou plus - Sexe	MOCO-AGEMEN8-SEXE	Population
+Mode de transport	TRANS_19	Population
+Mode de transport	TRANS	Population
+Nombre d'enfants de moins de 25 ans	NBENFFR	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Catégorie socioprofessionnelle détaillée (24 postes)	NBENFFR-CS2_24	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Catégorie socioprofessionnelle regroupée (8 postes)	NBENFFR-CS1_8	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Indicateur de nationalité condensé (Français/Étranger)	NBENFFR-INATC	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Nationalité détaillée (13 postes)	NBENFFR-NAT13	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Statut conjugal des conjoints	NBENFFR-STAT_CONJC_19	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Statut conjugal des conjoints	NBENFFR-STAT_CONJC	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Type de famille détaillé (12 postes)	NBENFFR-TF12	Nombre d'enfants
+Nombre d'enfants de moins de 25 ans - Type de famille détaillé (12 postes)	NBENFFR-TF12	Nombre de familles
+Nombre d'enfants de moins de 25 ans - Type de famille regroupé (4 postes)	NBENFFR-TF4	Nombre d'enfants
+Nombre d'enfants de moins de 25 ans - Type de famille regroupé (4 postes)	NBENFFR-TF4	Nombre de familles
+Nombre d'enfants de moins de 25 ans - État matrimonial légal des conjoints	NBENFFR-MATRC	Nombre de familles
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre de campings
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre d'emplacements des campings
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre d'hôtels
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre d'emplacements loués à l’année
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre d’emplacements offerts à la clientèle de passage
+Nombre d'étoiles d'un hébergement touristique	ETOILE	Nombre de chambres des hôtels
+Nombre de deux-roues à moteur du ménage (Dom) - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	DEROU-CS1_8-TYPLR	Nombre de logements
+Nombre de personnes du ménage - Catégorie socioprofessionnelle détaillée (24 postes)	NPERC-CS2_24	Nombre de logements
+Nombre de personnes du ménage - Catégorie socioprofessionnelle détaillée (24 postes)	NPERC-CS2_24	Population
+Nombre de personnes du ménage - Catégorie socioprofessionnelle regroupée (8 postes)	NPERC-CS1_8	Population
+Nombre de personnes du ménage - Catégorie socioprofessionnelle regroupée (8 postes)	NPERC-CS1_8	Nombre de logements
+Nombre de personnes du ménage - Nombre de pièces - Type de logement	NPERC-NBPIR-TYPLR	Nombre de logements
+Nombre de personnes du ménage - Statut d'occupation du logement - Type de logement	NPERC-STOCD-TYPLR	Nombre de logements
+Nombre de personnes du ménage - Âge quinquennal de moins de 20 ans jusqu'à 80 ans ou plus - Sexe	NPERC-AGEQ20_80-SEXE	Nombre de logements
+Nombre de personnes du ménage - Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Sexe	NPERC-AGEMEN7-SEXE	Nombre de logements
+Nombre de pièces - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	NBPIR-CS1_8-TYPLR	Nombre de logements
+Nombre de pièces regroupé	NBPIR5P	Nombre de logements
+Nombre de résidences principales hors studio de 1 personne	SUROCCHS1P	Nombre de logements
+Nombre de voitures du ménage	VOIT	Nombre de logements
+Nombre de voitures du ménage - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	VOIT-CS1_8-TYPLR	Nombre de logements
+Présence d'un ascenseur - Nombre de pièces - Type de logement	ASCEN-NBPIR-TYPLR	Nombre de logements
+Présence d'un ascenseur - Statut d'occupation du logement - Type de logement	ASCEN-STOCD-TYPLR	Nombre de logements
+Période d'achèvement de la construction (regroupé) - Type de logement	ACHLR3-TYPLR	Nombre de logements
+Période d'achèvement de la construction (regroupée en 3 tranches) - Nombre de pièces - Type de logement	ACHLR3T-NBPIR-TYPLR	Nombre de logements
+Période d'achèvement de la construction (regroupée en 3 tranches) - Statut d'occupation du logement - Type de logement	ACHLR3T-STOCD-TYPLR	Nombre de logements
+Période d'achèvement de la construction - Nombre de pièces - Type de logement	ACHLR2-NBPIR-TYPLR	Nombre de logements
+Période d'achèvement de la construction - Statut d'occupation du logement - Type de logement	ACHLR2-STOCD-TYPLR	Nombre de logements
+Période d'achèvement du logement - Nombre de pièces - Type de logement	ACHL16-NBPIR-TYPLR	Nombre de logements
+Période d'achèvement du logement - Nombre de pièces - Type de logement	ACHL15-NBPIR-TYPLR	Nombre de logements
+Période d'achèvement du logement - Statut d'occupation du logement - Type de logement	ACHL15-STOCD-TYPLR	Nombre de logements
+Période d'achèvement du logement - Statut d'occupation du logement - Type de logement	ACHL16-STOCD-TYPLR	Nombre de logements
+Sexe - Catégorie de population - Âge quinquennal jusqu'à 100 ans ou plus	SEXE-CATPR-AGEQ100	Population
+Sexe - Catégorie de population - Âge regroupé en 8 tranches, de moins de 15 ans jusqu'à 80 ans ou plus	SEXE-CATPR-AGEMEN8	Population
+Sexe - Catégorie socioprofessionnelle regroupée (6 postes)	SEXE-CS1_6	Nombre d'emplois (lieu de travail)
+Sexe - Conditions d'emploi	SEXE-EMPL	Nombre d'emplois (lieu de travail)
+Sexe - Diplôme	SEXE-DIPL_19	Population
+Sexe - Diplôme	SEXE-DIPL_15	Population
+Sexe - Diplôme regroupé	SEXE-DIPL_R	Population
+Sexe - Situation quant à l'immigration - Type d'activité, détaillé	SEXE-IMMI-TACTR	Population
+Sexe - Type d'activité regroupé 99 (avec militaires du contingent)	SEXE-TACTR99_2	Population
+Sexe - Type d'activité, détaillé - Indicateur de nationalité condensé (Français/Étranger)	SEXE-TACTR-INATC	Population
+Sexe - Type d'activité, détaillé - Nationalité détaillée (13 postes)	SEXE-TACTR-NAT13	Population
+Sexe - Type d'activité, détaillé - Pays de naissance (11 postes)	SEXE-TACTR-PNAI12_A	Population
+Sexe - Type d'activité, y compris moins de 14 ans - Indicateur de nationalité condensé (Français/Étranger)	SEXE-TACTR_3-INATC	Population
+Sexe - Âge correspondant aux âges en scolarité des 2 à 30 ans ou plus, en 10 tranches - Lieu d'étude	SEXE-AGEFOR10-ILETUR2	Population
+Sexe - Âge correspondant aux âges en scolarité des 2 à 30 ans ou plus, en 10 tranches - Scolarisation et lieu d'études	SEXE-AGEFOR10-ILETUR	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Indicateur de nationalité condensé (Français/Étranger)	SEXE-AGE4-INATC	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Nationalité détaillée (13 postes)	SEXE-AGE4-NAT13	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Nationalité détaillée (48 postes)	SEXE-AGE4-NATE49_B	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Pays de naissance (11 postes)	SEXE-AGE4-PNAI12_A	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Pays de naissance (47 postes)	SEXE-AGE4-PNAI48_A	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Situation quant à l'immigration	SEXE-AGE4-IMMI	Population
+Sexe - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus - Situation quant à l'immigration - Type d'activité, y compris moins de 14 ans	SEXE-AGE4-IMMI-TACTR_3	Population
+Sexe - Âge détaillé de 15 à 65 ans ou plus - Type d'activité	SEXE-AGED65-TACTR_2	Population
+Sexe - Âge détaillé de 2 à 30 ans ou plus - Lieu d'étude	SEXE-AGEFORD-ILETUR2	Population
+Sexe - Âge détaillé de 2 à 30 ans ou plus - Scolarisation et lieu d'études	SEXE-AGEFORD-ILETUR	Population
+Sexe - Âge détaillé jusqu'à 100 ans ou plus	SEXE-AGED100	Population
+Sexe - Âge en 4 classes de 1 an à 80 ans ou plus - Lieu de résidence 1 an auparavant regroupé en 4 classes	SEXE-AGE4_B-IRANR_4	Population
+Sexe - Âge en 7 tranches	SEXE-AGE15_15_90	Population
+Sexe - Âge quinquennal de 15 ans à 65 ans ou plus - Diplôme	SEXE-AGEQ65-DIPL_15	Population
+Sexe - Âge quinquennal de 15 ans à 65 ans ou plus - Diplôme	SEXE-AGEQ65-DIPL_19	Population
+Sexe - Âge quinquennal de 15 ans à 65 ans ou plus - Diplôme le plus élevé	SEXE-AGEQ65-DIPL	Population
+Sexe - Âge quinquennal de 15 ans à 65 ans ou plus - Type d'activité	SEXE-AGEQ65-TACTR_2	Population
+Sexe - Âge quinquennal de 15 ans à 65 ans ou plus - Type d'activité, détaillé	SEXE-AGEQ65-TACTR	Population
+Sexe - Âge quinquennal de 15 ans à 80 ans ou plus - Statut conjugal	SEXE-AGEQ80_14-STAT_CONJ	Population
+Sexe - Âge quinquennal de 15 ans à 80 ans ou plus - Statut conjugal	SEXE-AGEQ80_14-STAT_CONJ_19	Population
+Sexe - Âge quinquennal de 15 ans à 80 ans ou plus - Vie en couple	SEXE-AGEQ80_14-COUPLE	Population
+Sexe - Âge quinquennal de 15 ans à 80 ans ou plus - État matrimonial légal	SEXE-AGEQ80_14-MATR	Population
+Sexe - Âge quinquennal jusqu'à 100 ans ou plus	SEXE-AGEQ100	Population
+Sexe - Âge regroupé en 10 tranches jusqu'à 80 ans ou plus	SEXE-AGEPYR10	Population
+Sexe - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Diplôme	SEXE-AGEACT6_B-DIPL_19	Population
+Sexe - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Diplôme	SEXE-AGEACT6_B-DIPL_15	Population
+Sexe - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Diplôme le plus élevé	SEXE-AGEACT6_B-DIPL	Population
+Sexe - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Type d'activité	SEXE-AGEACT6_B-TACTR_2	Population
+Sexe - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Type d'activité, détaillé	SEXE-AGEACT6_B-TACTR	Population
+Sexe - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - Statut conjugal	SEXE-AGEMEN8_A-STAT_CONJ_19	Population
+Sexe - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - Statut conjugal	SEXE-AGEMEN8_A-STAT_CONJ	Population
+Sexe - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - Vie en couple	SEXE-AGEMEN8_A-COUPLE	Population
+Sexe - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - État matrimonial légal	SEXE-AGEMEN8_A-MATR	Population
+Sexe - Âge regroupé lié à des problématiques d'emploi - Situation quant à l'immigration - Type d'activité, détaillé	SEXE-AGEREMPLOI-IMMI-TACTR	Population
+Sexe - Âge regroupé lié à des problématiques d'emploi - Situation quant à l'immigration - Type d'activité, y compris moins de 14 ans	SEXE-AGEREMPLOI-IMMI-TACTR_3	Population
+Sexe - Âge à partir de 15 ans en 3 tranches	SEXE-AGE3_B	Population
+Sexe - Âge à partir de 15 ans en 4 tranches	SEXE-AGE3	Population
+Situation quant à l'immigration - Catégorie socioprofessionnelle regroupée (8 postes) - Sexe	IMMI-CS1_8-SEXE	Population
+Sphère économique - Appartenance au domaine public d'un établissement	SPHEREECO-DOMPUB	Nombre d'établissements
+Sphère économique - Appartenance au domaine public d'un établissement	SPHEREECO-DOMPUB	Postes salariés dans les établissements
+Statut conjugal	STAT_CONJ_19	Population
+Statut conjugal	STAT_CONJ	Population
+Statut d'occupation du logement	STOCD	Nombre d'heures annuelles travaillées
+Statut d'occupation du logement	STOCD	Population
+Statut d'occupation du logement	STOCD	Nombre de logements
+Statut d'occupation du logement - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	STOCD-CS1_8-TYPLR	Nombre de logements
+Statut d'occupation du logement - Nombre de pièces - Type de logement	STOCD-NBPIR-TYPLR	Nombre de logements
+Statut professionnel détaillé (4 postes) - Âge quinquennal de moins de 20 ans à 65 ans ou plus - Temps de travail - Sexe	STAT-AGEQ20_65P-TP-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel détaillé (4 postes) - Âge regroupé en 6 tranches, de moins de 20 ans jusqu'à 65 ans ou plus - Temps de travail - Sexe	STAT-AGEACT6-TP-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Activité économique agrégée en 5 postes (NA, 2008) - Sexe	STATR-NA5-SEXE	Population
+Statut professionnel regroupé (2 postes) - Activité économique agrégée en 5 postes (NA, 2008) - Sexe	STATR-NA5-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Activité économique en 17 postes (NA - A17) - Sexe	STATR-NA17-SEXE	Population
+Statut professionnel regroupé (2 postes) - Activité économique en 17 postes (NA - A17) - Sexe	STATR-NA17-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Activité économique en 38 postes (NA - A38) - Sexe	STATR-NA38-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Activité économique en 38 postes (NA - A38) - Sexe	STATR-NA38-SEXE	Population
+Statut professionnel regroupé (2 postes) - Sexe	STATR-SEXE	Population
+Statut professionnel regroupé (2 postes) - Sexe	STATR-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Temps de travail	STATR-TP	Population
+Statut professionnel regroupé (2 postes) - Temps de travail	STATR-TP	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Âge quinquennal de 15 ans à 65 ans ou plus - Temps de travail - Sexe	STATR-AGEQ65-TP-SEXE	Population
+Statut professionnel regroupé (2 postes) - Âge quinquennal de moins de 20 ans à 65 ans ou plus - Temps de travail - Sexe	STATR-AGEQ20_65P-TP-SEXE	Nombre d'emplois (lieu de travail)
+Statut professionnel regroupé (2 postes) - Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Temps de travail - Sexe	STATR-AGEACT6_B-TP-SEXE	Population
+Statut professionnel regroupé (2 postes) - Âge regroupé en 6 tranches, de moins de 20 ans jusqu'à 65 ans ou plus - Temps de travail - Sexe	STATR-AGEACT6-TP-SEXE	Nombre d'emplois (lieu de travail)
+Superficie du logement - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	SURF-CS1_8-TYPLR	Nombre de logements
+Superficie du logement - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	SURF11-CS1_8-TYPLR	Nombre de logements
+Superficie du logement - Nombre de pièces - Type de logement	SURF-NBPIR-TYPLR	Nombre de logements
+Superficie du logement - Nombre de pièces - Type de logement	SURF11-NBPIR-TYPLR	Nombre de logements
+Superficie du logement - Statut d'occupation du logement - Type de logement	SURF-STOCD-TYPLR	Nombre de logements
+Superficie du logement - Statut d'occupation du logement - Type de logement	SURF11-STOCD-TYPLR	Nombre de logements
+Surface du logement - Catégorie socioprofessionnelle regroupée (8 postes) - Type de logement	SURF_15-CS1_8-TYPLR	Nombre de logements
+Surface du logement - Nombre de pièces - Type de logement	SURF_15-NBPIR-TYPLR	Nombre de logements
+Surface du logement - Statut d'occupation du logement - Type de logement	SURF_15-STOCD-TYPLR	Nombre de logements
+Temps de travail - Conditions d'emploi - Sexe	TP-EMPL-SEXE	Nombre d'emplois (lieu de travail)
+Temps de travail - Sexe	TP-SEXE	Nombre de salariés
+Temps de travail - Sexe - Âge à partir de 15 ans en 4 tranches	TP-SEXE-AGE3P	Nombre de salariés
+Tout à l'égout	TOUTALEGOU	Nombre de logements
+Type d'activité	TACTR_2	Population
+Type d'activité - Sexe - Âge à partir de 15 ans en 4 tranches	TACTR_2-SEXE-AGE3	Population
+Type d'activité - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus	TACTR_2-AGE4	Population
+Type d'activité - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus	TACTR_2-AGEMEN8_A	Population
+Type d'activité 99 (avec militaires du contingent)	TACTR99	Population
+Type d'activité regroupé 99 (avec militaires du contingent) - Âge correspondant aux âges liés à l'activité de moins de 15 ans à 55 ans ou plus	TACTR99_2-AGE4	Population
+Type d'activité, détaillé	TACTR	Population
+Type d'activité, détaillé - Âge quinquennal de 15 ans à 80 ans ou plus - Sexe	TACTR-AGEQ80_14-SEXE	Nombre de logements
+Type d'activité, détaillé - Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - Sexe	TACTR-AGEMEN8_A-SEXE	Nombre de logements
+Type de famille regroupé (4 postes)	TF4	Population
+Type de famille regroupé (4 postes)	TF4	Nombre de familles
+Type de famille regroupé (4 postes)	TF4	Nombre de logements
+Type de logement - Catégorie de logement	TYPLR-CATL	Nombre de pièces
+Type de logement - Catégorie de logement	TYPLR-CATL	Nombre de logements
+Type de logement - Période d'achèvement de la construction (regroupée en 3 tranches)	TYPLR-ACHLR3T	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL18	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL17	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL16	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL15	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL19	Nombre de logements
+Type de logement - Période d'achèvement du logement	TYPLR-ACHL20	Nombre de logements
+Type de ménage (regroupé en 9 postes)	TYPMR	Population
+Type de ménage (regroupé en 9 postes)	TYPMR	Nombre de logements
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Catégorie socioprofessionnelle détaillée (24 postes)	AGEFOR5-CS2_24	Population
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Catégorie socioprofessionnelle regroupée (8 postes)	AGEFOR5-CS1_8	Population
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Indicateur de nationalité condensé (Français/Étranger)	AGEFOR5-INATC	Population
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Nationalité détaillée (13 postes)	AGEFOR5-NAT13	Population
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Statut conjugal des conjoints	AGEFOR5-STAT_CONJC_19	Nombre d'enfants
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Statut conjugal des conjoints	AGEFOR5-STAT_CONJC	Nombre d'enfants
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Type de famille détaillé (12 postes)	AGEFOR5-TF12	Nombre d'enfants
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - Type de famille regroupé (4 postes)	AGEFOR5-TF4	Nombre d'enfants
+Âge correspondant aux âges en scolarité de moins de 3 ans à 25 ans ou plus, en 6 tranches - État matrimonial légal des conjoints	AGEFOR5-MATRC	Nombre d'enfants
+Âge des personnes scolarisées en 7 tranches - Inscription dans un établissement d'enseignement	AGESCOL-ETUD	Population
+Âge des personnes scolarisées en 7 tranches - Sexe - Inscription dans un établissement d'enseignement	AGESCOL-SEXE-ETUD	Population
+Âge en 7 tranches	AGE15_15_90	Population
+Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Conditions d'emploi - Sexe	AGEACT6_B-EMPL-SEXE	Population
+Âge regroupé en 6 tranches des 15 ans ou plus jusqu'à 65 ans ou plus - Conditions d'emploi - Temps de travail - Sexe	AGEACT6_B-EMPL-TP-SEXE	Population
+Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus	AGEMEN8_A	Population des ménages
+Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus	AGEMEN8_A	Nombre de personnes vivant seules
+Âge regroupé en 7 tranches des 15 ans ou plus jusqu'à 80 ans ou plus - Vie en couple	AGEMEN8_A-COUPLE	Population
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Nombre de pièces - Type de logement	AGEMEN7-NBPIR-TYPLR	Nombre de logements
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Statut d'occupation du logement - Type de logement	AGEMEN7-STOCD-TYPLR	Nombre de logements
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Type de ménage (condensé en 4 postes)	AGEMEN7-TYPMC	Population
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Type de ménage (condensé en 4 postes)	AGEMEN7-TYPMC	Nombre de logements
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Type de ménage (regroupé en 9 postes)	AGEMEN7-TYPMR	Nombre de logements
+Âge regroupé en 7 tranches, de moins de 20 ans jusqu'à 80 ans ou plus - Type de ménage (regroupé en 9 postes)	AGEMEN7-TYPMR	Population
+Âge regroupé lié à des problématiques d'emploi - Catégorie socioprofessionnelle regroupée (8 postes)	AGE4_A-CS1_8	Population
+Électricité dans le logement	ELEC	Nombre de logements
+État matrimonial légal	MATR	Population
