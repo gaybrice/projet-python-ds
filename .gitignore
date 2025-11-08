@@ -2,9 +2,11 @@
 __pycache__/
 *.py[codz]
 *$py.class
-
+cache/
 # C extensions
 *.so
+*.sqlite
+*.geojson
 
 # Distribution / packaging
 .Python
@@ -205,3 +207,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+docu_gtfs_ratp.pdf
