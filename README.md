@@ -1,4 +1,6 @@
 # projet-python-ds
 Projet pour le cours python pour la data science
 
-Installation des dépendances : 'pip install -r requirements.txt'
+Pour le rendu html :
+'uv sync'
+'quarto render main.ipynb --execute'
