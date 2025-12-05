@@ -2,5 +2,7 @@
 Projet pour le cours python pour la data science
 
 Pour le rendu html :
-'uv sync'
-'quarto render main.ipynb --execute'
+```
+uv sync
+uv run quarto render main.ipynb --execute
+```

@@ -1,5 +1,0 @@
-pynsee
-pandas
-cartiflette
-geopandas
-matplotlib
