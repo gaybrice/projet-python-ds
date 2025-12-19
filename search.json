@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "notebooks/idfm.html",
+    "href": "notebooks/idfm.html",
+    "title": "Traitement des données IDFM",
+    "section": "",
+    "text": "Retour à la page principale."
+  },
+  {
+    "objectID": "notebooks/dvf.html",
+    "href": "notebooks/dvf.html",
+    "title": "Traitement des données DVF",
+    "section": "",
+    "text": "Retour à la page principale."
+  },
+  {
+    "objectID": "notebooks/main.html",
+    "href": "notebooks/main.html",
+    "title": "Rendu final",
+    "section": "",
+    "text": "🚧 Page en Construction 🚧\n\n\nLe rendu final sera ici !\n\n 🔗 Lien vers le GitHub \n\n\nÉtude du lien entre le prix du logement et l’offre de transport en Île-de-France\nIntro à écrire\nLe traitement des données IDFM est présenté sur cette page.\nLe traitement des données DVF est présenté sur cette page.\n\n\nExemple\nCréation d’un graphique interactif avec plotly :\n\n\nCode\n\nimport plotly.graph_objects as go\nfrom IPython.display import Image\nimport numpy as np\nnp.random.seed(1)\n\nN = 100\nx = np.random.rand(N)\ny = np.random.rand(N)\ncolors = np.random.rand(N)\nsz = np.random.rand(N) * 30\n\nfig = go.Figure()\nfig.add_trace(go.Scatter(\n    x=x,\n    y=y,\n    mode=\"markers\",\n    marker=go.scatter.Marker(\n        size=sz,\n        color=colors,\n        opacity=0.6,\n        colorscale=\"Viridis\"\n    )\n))"
+  }
+]
