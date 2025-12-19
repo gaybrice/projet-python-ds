@@ -7,7 +7,7 @@ project:
   - index.qmd
 
 execute:
-  enabled: true
+  enabled: false
   freeze: auto
 
 website:
