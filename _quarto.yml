@@ -1,0 +1,31 @@
+project:
+  type: website
+  output-dir: site
+  render:
+  - "notebooks/*"
+  - about.qmd
+
+execute:
+  enabled: true
+  freeze: auto
+
+website:
+  title: "Prix du logement vs offre de transport"
+  navbar:
+    left:
+      - text: Analyse
+        href: notebooks/main.ipynb
+      - text: Traitement DVF
+        href: notebooks/dvf.ipynb
+      - text: Traitement IDFM
+        href: notebooks/idfm.ipynb
+      - about.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    toc: true
+
+
