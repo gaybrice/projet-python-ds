@@ -1,0 +1,12 @@
+---
+title: "Index"
+---
+
+---
+title: Redirecting to main page…
+format: html
+---
+
+<script>
+  window.location.replace("notebooks/main.html");
+</script>

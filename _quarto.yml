@@ -4,6 +4,7 @@ project:
   render:
   - "notebooks/*"
   - about.qmd
+  - index.qmd
 
 execute:
   enabled: true
@@ -11,7 +12,13 @@ execute:
 
 website:
   title: "Prix du logement vs offre de transport"
+  
+  search: false
   navbar:
+    logo-href: /notebooks/main.ipynb
+    brand:
+      - text: Prix du logement vs offre de transport
+        href: notebooks/main.ipynb
     left:
       - text: Analyse
         href: notebooks/main.ipynb
@@ -19,7 +26,11 @@ website:
         href: notebooks/dvf.ipynb
       - text: Traitement IDFM
         href: notebooks/idfm.ipynb
-      - about.qmd
+      - text: About
+        href: about.qmd
+    right:
+      - href: "https://github.com/gaybrice/projet-python-ds"
+        icon: github
 
 format:
   html:
@@ -27,5 +38,3 @@ format:
       - cosmo
       - brand
     toc: true
-
-
