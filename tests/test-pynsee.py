@@ -29,10 +29,32 @@ Args:
         silent (bool, optional): Set to True to disable messages printed in log info
         backwardperiod (int, optional): this arg is used only whenever the latest data is searched, it specifies the number of past years the loop should run through.
 '''
-data = pynsee.get_local_data("NA5-CS1_6-SEXE",
-    "GEOlatestRPlatest", 
-    "FE" # france entiere pour avoir moins de ligne, remplacer par COM pour les communes
-)
+variables = [
+    "NA5-CS1_6-SEXE",
+    "NA5-CS1_3-AGE",
+    "POP-COM"
+]
+
+nivgeo = "FE"
+dataset_version = "GEOlatestRPlatest"
+
+# Dictionnaire pour stocker les DataFrames
+data_dict = {}
+
+for var in variables:
+    print(f"Téléchargement de {var} ...")
+    df = pynsee.get_local_data(
+        variables=var,
+        dataset_version=dataset_version,
+        nivgeo=nivgeo
+    )
+    
+    # Stocker dans le dictionnaire
+    data_dict[var] = df
+    print(f"{var} téléchargé et stocké dans data_dict")
+
+
+data = data_dict["NA5-CS1_6-SEXE"]
 
 data.to_csv("na5_cs1_6_sexe_france.csv")
 data[(data["CS1_6"] == "1") & (data["NA5"] == "AZ")] # filtrage des agriculteurs travaillant dans le secteur de l'agriculture
@@ -57,3 +79,21 @@ CS1_6 :
 - 4 Techniciens, agents de maîtrise et autres professions intermédiaires-
 - 5 ou 6 Employés ou ouvriers
 '''
+
+data
+
+meta = pynsee.get_local_metadata()
+
+# --- Sélection et nettoyage ---
+df = (
+    meta[["VARIABLES", "VARIABLES_label_fr"]]
+    .drop_duplicates()
+    .sort_values("VARIABLES_label_fr")
+)
+
+# --- Export en Excel ---
+df.to_excel("variables_insee.xlsx", index=False)
+
+print("Fichier 'variables_insee.xlsx' créé avec succès !")
+
+
