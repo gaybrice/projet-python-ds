@@ -1,1 +1,0 @@
-# TODO : tester l'accès à la base de donnee des votes
