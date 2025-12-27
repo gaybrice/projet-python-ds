@@ -72,8 +72,8 @@ def load_fonds_carte(crs, force_download=False, ):
         communes = fetch_cartiflette(values=[REGION_CODE], borders="COMMUNE_ARRONDISSEMENT", filter_by="REGION", crs=crs)
         communes.to_file(communes_out, driver="GeoJSON")
         print(f"Communes récupérées : {len(communes)} entités sauvegardé dans : {communes_out}")
-    else:
-        print("Téléchargement des bordures de communes / départements mis en cache")
+    # else:
+        # print("Téléchargement des bordures de communes / départements mis en cache")
 
     return [gpd.read_file(communes_out), gpd.read_file(deps_out)]
 
