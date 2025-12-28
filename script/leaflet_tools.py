@@ -117,25 +117,54 @@ def creation_heatmap(gdf, cell_size, target_value_col="Valeur foncière au mètr
 
     return grid_final
 
-def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m² :", "Nb transactions :"], custom_cmap=None, default_cmap_caption="Prix moyen au m² (€)"):
-    vmin = grid[target_value_col].min()
-    vmax = grid[target_value_col].max()
+def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m² :", "Nb transactions :"], cmap=None, default_cmap_caption="Prix moyen au m² (€)", use_log_scale=False, log_base=10):
+    vals = grid[target_value_col].dropna().astype(float)
+    if use_log_scale:
+        positive = vals[vals > 0]
+        if positive.empty:
+            use_log_scale = False  # fallback to linear if no positive values
+        else:
+            vmin = np.log(positive.min()) / np.log(log_base)
+            vmax = np.log(positive.max()) / np.log(log_base)
+            caption = f"{default_cmap_caption} (log{log_base})"
+    if not use_log_scale:
+        if vals.empty:
+            vmin = 0.0
+            vmax = 1.0
+        else:
+            vmin = vals.min()
+            vmax = vals.max()
+        caption = default_cmap_caption
 
-    if custom_cmap is None:
+    if type(cmap) == str:
+        if  "bicolor" in cmap:
+            colors = ["blue", "white", "red"]
+        elif "default" in cmap:
+            colors = ["#d9d9d9", "yellow", "orange", "red"]
+        else:
+            colors = plt.get_cmap(cmap).colors
+        if "reverse" in cmap:
+            colors = colors[::-1]
+
         cmap = LinearColormap(
-            colors=["#d9d9d9", "yellow", "orange", "red"],
+            colors=colors,
             vmin=vmin,
             vmax=vmax,
-            caption=default_cmap_caption
+            caption=caption
         )
-    else:
-        cmap = custom_cmap
-    
+
     def style_function(feature):
-        prix = feature["properties"][target_value_col]
+        prix = feature["properties"].get(target_value_col)
         try:
             prix = float(prix)
-            fill = cmap(prix) if not np.isnan(prix) else "#f0f0f0"
+            if use_log_scale:
+                if prix <= 0 or np.isnan(prix):
+                    fill = "#f0f0f0"
+                else:
+                    val = np.log(prix) / np.log(log_base)
+                    fill = cmap(val)
+            else:
+                fill = cmap(prix) if not np.isnan(prix) else "#f0f0f0"
         except (TypeError, ValueError):
             fill = "#f0f0f0"
 
@@ -152,7 +181,7 @@ def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m�
     if legend[1] == "":
         fields = [target_value_col]
         legend = [legend[0]]
-        
+
     folium.GeoJson(
         grid,
         style_function=style_function,
@@ -163,7 +192,6 @@ def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m�
         ),
         name="Grille transactions"
     ).add_to(m)
-
 
     # --- Légende ---
     cmap.add_to(m)
