@@ -23,7 +23,7 @@ from playwright.async_api import async_playwright
 from pathlib import Path
 
 !playwright install chromium
-# !playwright install-deps chromium
+!playwright install-deps chromium
 
 for fig in figure_list:
     html = Path(f"assets/maps/{fig}.html")
