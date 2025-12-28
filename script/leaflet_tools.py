@@ -117,7 +117,7 @@ def creation_heatmap(gdf, cell_size, target_value_col="Valeur foncière au mètr
 
     return grid_final
 
-def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m² :", "Nb transactions :"], cmap=None, default_cmap_caption="Prix moyen au m² (€)", use_log_scale=False, log_base=10):
+def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m² :", "Nb transactions :"], cmap=None, default_cmap_caption="Prix moyen au m² (€)", use_log_scale=False, log_base=10, display_cmap=True):
     vals = grid[target_value_col].dropna().astype(float)
     if use_log_scale:
         positive = vals[vals > 0]
@@ -194,6 +194,7 @@ def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen €/m�
     ).add_to(m)
 
     # --- Légende ---
-    cmap.add_to(m)
+    if display_cmap:
+        cmap.add_to(m)  
 
     return m

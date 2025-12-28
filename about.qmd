@@ -1,5 +1,8 @@
 ---
-title: "About"
+title: "À propos"
 ---
+Ce projet est réalisé dans le cadre du cours [Python pour la data-science](https://pythonds.linogaliana.fr/) de l'ENSAE par **Etienne Kubiak** et **Brice Gay**.
 
-About this site
+Il rassemble des notebooks et scripts destinés à illustrer des étapes courantes d'analyse de données : ingestion, nettoyage, exploration, visualisation et exemples de modélisation.
+
+Les analyses sont à but pédagogique et exploratoire. <ins>Aucune garantie de correction ou d'exhaustivité n'est fournie.</ins>
