@@ -6,9 +6,11 @@ project:
   - about.qmd
   - index.qmd
 
+resources:
+  - assets/**
 execute:
   enabled: false
-  freeze: auto
+  # freeze: auto
 
 website:
   title: "Prix du logement vs offre de transport"

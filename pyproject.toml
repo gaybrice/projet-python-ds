@@ -13,6 +13,7 @@ dependencies = [
     "jupyter>=1.1.1",
     "matplotlib>=3.10.8",
     "pandas>=2.3.3",
+    "playwright>=1.57.0",
     "plotly>=6.5.0",
     "pynsee>=0.2.4",
     "scikit-learn>=1.8.0",
