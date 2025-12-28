@@ -7,22 +7,23 @@ Il rassemble des notebooks et scripts destinés à illustrer des étapes courant
 
 Les analyses sont à but pédagogique et exploratoire. <ins>Aucune garantie de correction ou d'exhaustivité n'est fournie.</ins>
 
-# Annexe 
+# Annexe : compression des pages HTML 
 
-Le rendu en PNG des figures HTML est effectué par le code suivant :
+Certaines visualisations HTML générées par `leaflet` sont très lourde. Afin de ne pas ralentir le site final, seul un rendu PNG statique est affiché et l'utilisateur peut cliquer dessus pour accéder à la version dynamique.
+
+Le rendu est effectué à l'aide de la bibliothèque `playwright` par le code suivant :
 
 ```{python}
 #| output: false
 
-figure_list = ["idfm1", "idfm2", "dvf1", "dvf2", "dvf3", "main1"]
+figure_list = ["idfm1", "idfm2", "dvf1", "dvf2", "dvf3", "main1", "ml1", "ml2", "ml3"]
 
-# les visualisations sont trop lourde pour être rendue dans le site final
-# on utilise donc playwright pour générer une capture d'écran
+# on utilise playwright pour générer une capture d'écran
 from playwright.async_api import async_playwright
 from pathlib import Path
 
 !playwright install chromium
-!playwright install-deps chromium
+# !playwright install-deps chromium
 
 for fig in figure_list:
     html = Path(f"assets/maps/{fig}.html")
