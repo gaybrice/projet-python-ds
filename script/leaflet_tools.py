@@ -141,6 +141,8 @@ def display_heatmap(grid, target_value_col="moyenne", legend=["Prix moyen â‚¬/mÂ
             colors = ["blue", "white", "red"]
         elif "default" in cmap:
             colors = ["#d9d9d9", "yellow", "orange", "red"]
+        elif "no_grey" in cmap:
+            colors = ["yellow", "orange", "red"]
         else:
             colors = plt.get_cmap(cmap).colors
         if "reverse" in cmap:

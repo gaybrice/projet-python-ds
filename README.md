@@ -22,34 +22,33 @@ Tous les résultats sont accessibles depuis le [site du projet](https://gaybrice
 Depuis la racine du projet :
 ```bash
 # synchroniser les dépendances
+cd /chemin/vers/projet-python-ds
 uv sync
 ```
 (ou documenter alternative si `uv` n'est pas disponible, ex. pip/conda/poetry).
 
 ## Reproduction des données IDFM (facultatif)
-L'API IDFM fournit des prévisions pour 30 jours. Pour garantir la reproductibilité, un fichier zippé du cache utilisé est disponible ici (TODO AJOUT DU LIEN !!!).
 
-Commandes pour télécharger et décompresser dans `cache/` :
-```bash
-cd /chemin/vers/projet-python-ds
-mkdir -p cache
-cd cache
-curl -L -o idfm_cache.zip 'LIEN'
-unzip idfm_cache.zip
-rm idfm_cache.zip
+> ℹ️ Cette étape est **complètement facultative**. Si vous ne l'effectuez pas, les données des 30 prochains jours seront récupérées dynamiquement lors de l'exécution.
+
+L'API IDFM fournit des prévisions pour 30 jours. Pour assurer la reproductibilité, un fichier ZIP contenant ces données est disponible [ici](https://drive.google.com/uc?export=download&id=1yoWm96LvktgkUhv6kgPcixghCDm050Vf).
+
+Téléchargez et décompressez son contenu dans `cache/idfm/`. Après extraction, vous devriez obtenir :
+
+```file
+cache/
+    idfm/
+        calendar.csv
+        routes.csv
+        stop_times.csv
+        stops.csv
+        trips.csv
 ```
-Si vous n'effectuez pas cette étape, les données des 30 prochains jours seront récupérées dynamiquement lors de l'exécution.
 
 ## Reproduction du site
-Depuis la racine du projet :
 ```bash
+cd /chemin/vers/projet-python-ds
 uv run quarto render --execute
 ```
 
-Les fichiers HTML sont créés dans `site/`.
-
-## Exécuter un notebook individuel
-Pour exécuter un notebook/quarto spécifique :
-```bash
-uv run quarto render notebooks/mon_notebook.ipynb --execute
-```
+Les notebooks sont tous executés, et les fichiers HTML du site sont créés dans `site/`.
