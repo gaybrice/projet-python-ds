@@ -6,3 +6,41 @@ Ce projet est réalisé dans le cadre du cours [Python pour la data-science](htt
 Il rassemble des notebooks et scripts destinés à illustrer des étapes courantes d'analyse de données : ingestion, nettoyage, exploration, visualisation et exemples de modélisation.
 
 Les analyses sont à but pédagogique et exploratoire. <ins>Aucune garantie de correction ou d'exhaustivité n'est fournie.</ins>
+
+# Annexe 
+
+Le rendu en PNG des figures HTML est effectué par le code suivant :
+
+```{python}
+#| output: false
+
+figure_list = ["idfm1", "idfm2", "dvf1", "dvf2", "dvf3", "main1"]
+
+# les visualisations sont trop lourde pour être rendue dans le site final
+# on utilise donc playwright pour générer une capture d'écran
+from playwright.async_api import async_playwright
+from pathlib import Path
+
+!playwright install chromium
+!playwright install-deps chromium
+
+for fig in figure_list:
+    html = Path(f"assets/maps/{fig}.html")
+    png = Path(f"assets/maps/{fig}.png")
+
+    
+    async def screenshot_map():
+        async with async_playwright() as p:
+            browser = await p.chromium.launch()
+            page = await browser.new_page(
+                viewport={"width": 1200, "height": 800}
+            )
+            await page.goto(html.resolve().as_uri())
+            await page.wait_for_timeout(3000)  # wait for tiles
+            await page.screenshot(path=png)
+            await browser.close()
+
+    await screenshot_map()
+
+
+```
