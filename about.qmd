@@ -17,7 +17,7 @@ Le rendu est effectué à l'aide de la bibliothèque `playwright` par le code su
 #| output: true
 #| code-fold: true
 
-figure_list = ["idfm1", "idfm2", "dvf1", "dvf2", "dvf3", "main1", "ml1", "ml2", "ml3", "niveau_vie"]
+figure_list = ["idfm1", "idfm2", "dvf1", "dvf2", "dvf3", "main1", "ml1", "ml2", "ml3", "ml4", "niveau_vie"]
 
 # on utilise playwright pour générer une capture d'écran
 from playwright.async_api import async_playwright
