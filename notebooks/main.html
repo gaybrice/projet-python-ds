@@ -2623,6 +2623,8 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
   <li><a href="#ajout-de-la-desserte-à-dvf" id="toc-ajout-de-la-desserte-à-dvf" class="nav-link" data-scroll-target="#ajout-de-la-desserte-à-dvf">Ajout de la desserte à DVF</a>
   <ul class="collapse">
   <li><a href="#calcul-des-arrêts-les-plus-proches" id="toc-calcul-des-arrêts-les-plus-proches" class="nav-link" data-scroll-target="#calcul-des-arrêts-les-plus-proches">Calcul des arrêts les plus proches</a></li>
+  <li><a href="#ajout-de-la-distance-au-centre-de-paris" id="toc-ajout-de-la-distance-au-centre-de-paris" class="nav-link" data-scroll-target="#ajout-de-la-distance-au-centre-de-paris">Ajout de la distance au centre de Paris</a></li>
+  <li><a href="#ajout-du-revenu-médian-par-commune" id="toc-ajout-du-revenu-médian-par-commune" class="nav-link" data-scroll-target="#ajout-du-revenu-médian-par-commune">Ajout du revenu médian par commune</a></li>
   <li><a href="#visualisation-du-résultat" id="toc-visualisation-du-résultat" class="nav-link" data-scroll-target="#visualisation-du-résultat">Visualisation du résultat</a></li>
   </ul></li>
   </ul>
@@ -2893,88 +2895,283 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 </details>
 </div>
 </section>
+<section id="ajout-de-la-distance-au-centre-de-paris" class="level2">
+<h2 class="anchored" data-anchor-id="ajout-de-la-distance-au-centre-de-paris">Ajout de la distance au centre de Paris</h2>
+<p>On ajoute la distance au centre de Paris, cela nous permet de nous rendre compte qu’une dizaine de points sont localisés en dehors de l’Île-de-France (sans doute des erreurs de l’API de géocodage). Nous supprimons ces points.</p>
+<div id="8d416003" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recuperatin des coordonnees du centre de paris (station Chatelet les Halles)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note : on utilise les df avec les geometries en metres</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>centre_paris <span class="op">=</span> gdf_idfm_small_m[gdf_idfm_small_m[<span class="st">&#39;stop_name&#39;</span>] <span class="op">==</span> <span class="st">&#39;Châtelet les Halles&#39;</span>][<span class="st">&quot;geometry&quot;</span>].values[<span class="dv">0</span>]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ajouter une colonne distance au centre de paris</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>gdf_dvf_m[<span class="st">&#39;geometry&#39;</span>] <span class="op">=</span> gdf_dvf_m.geometry.to_crs(epsg<span class="op">=</span><span class="dv">3857</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>gdf_dvf_m[<span class="st">&#39;dist_centre_paris_m&#39;</span>] <span class="op">=</span> gdf_dvf_m.geometry.distance(centre_paris)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ajout au dataframe final</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final <span class="op">=</span> gdf_dvf_final.merge(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    gdf_dvf_m[[<span class="st">&#39;point_id&#39;</span>, <span class="st">&#39;dist_centre_paris_m&#39;</span>]],</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">&#39;point_id&#39;</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">&#39;left&#39;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># filtrage des points trop éloignés (hors ile de france)</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Suppression de </span><span class="sc">{</span><span class="bu">len</span>(gdf_dvf_final[gdf_dvf_final[<span class="st">&#39;dist_centre_paris_m&#39;</span>] <span class="op">&gt;</span> <span class="dv">140000</span>])<span class="sc">}</span><span class="ss"> points trop éloignés (hors ile de france) :&quot;</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final <span class="op">=</span> gdf_dvf_final[gdf_dvf_final[<span class="st">&#39;dist_centre_paris_m&#39;</span>] <span class="op">&lt;=</span> <span class="dv">140000</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Suppression de 10 points trop éloignés (hors ile de france) :</code></pre>
+</div>
+</div>
+<div id="7f1b5757" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nettoyage et enregistrement du GeoDataFrame final</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final.drop([<span class="st">&#39;search&#39;</span>, <span class="st">&#39;Date mutation&#39;</span>, <span class="st">&#39;Valeur fonciere&#39;</span>, <span class="st">&#39;Code commune&#39;</span>, <span class="st">&#39;result_score&#39;</span>, <span class="st">&#39;point_id&#39;</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ajout d&#39;une colonne departement à gdf_dvf_final</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final[<span class="st">&quot;Department&quot;</span>] <span class="op">=</span> (gdf_dvf_final[<span class="st">&quot;Code_postal&quot;</span>].astype(<span class="bu">int</span>) <span class="op">//</span> <span class="dv">1000</span>).astype(<span class="bu">str</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># reorganisation des colonnes</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> gdf_dvf_final.columns.tolist()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>cols_reordered <span class="op">=</span> cols[:<span class="dv">2</span>] <span class="op">+</span> cols[<span class="op">-</span><span class="dv">2</span>:]<span class="op">+</span> cols[<span class="dv">7</span>:<span class="dv">8</span>] <span class="op">+</span> cols[<span class="dv">2</span>:<span class="dv">7</span>] <span class="op">+</span> cols[<span class="dv">8</span>:<span class="op">-</span><span class="dv">2</span>]</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final <span class="op">=</span> gdf_dvf_final[cols_reordered]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># enregistrer le GeoDataFrame final en GeoJSON</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final.to_file(<span class="st">&quot;cache/results/logements_transport_final.geojson&quot;</span>, driver<span class="op">=</span><span class="st">&quot;GeoJSON&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gdf_dvf_final[gdf_dvf_final[<span class="st">&#39;dist_centre_paris_m&#39;</span>] <span class="op">&gt;</span> <span class="dv">100000</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                             adresse Code_postal  dist_centre_paris_m  \
+135                1 ALL DES MAZURES       77880        100053.071484   
+373            1 AV DE LA LIBERATION       77130        104654.586876   
+419             1 AV DES MARRONNIERS       91670        101040.791056   
+589                      1 BD CARNOT       77570        125749.804118   
+618                   1 CHE DE FLAGY       77940        115925.598151   
+...                              ...         ...                  ...   
+71948         93 RUE GRANDE VARENNES       77460        123845.828031   
+72225           96 LES PETITES AUNES       77690        100197.091027   
+72316  97 CHE DE L&#39;ORME DE MONFERRAT       77320        106123.319618   
+72432                98 RTE DE MORET       77140        101532.700910   
+72569          99 RUE DESIRE THOISON       77130        110310.801259   
+
+      Department  Valeur foncière au mètre carré                Commune  \
+135           77                     3493.150685         GREZ-SUR-LOING   
+373           77                     1666.666667  MONTEREAU FAULT YONNE   
+419           91                     1366.336634             ANGERVILLE   
+589           77                     1854.166667         CHATEAU-LANDON   
+618           77                     1666.666667            MONTMACHOUX   
+...          ...                             ...                    ...   
+71948         77                     1297.468354      SOUPPES-SUR-LOING   
+72225         77                     1666.666667     MONTIGNY-SUR-LOING   
+72316         77                     1992.248062         BETON-BAZOCHES   
+72432         77                     2409.090909   MONCOURT FROMONVILLE   
+72569         77                     1967.213115          CANNES-ECLUSE   
+
+       Surface reelle bati  Surface terrain  Nombre pieces principales  \
+135                   73.0           1320.0                        4.0   
+373                   90.0              0.0                        4.0   
+419                  101.0            776.0                        6.0   
+589                   48.0              0.0                        2.0   
+618                   90.0           2760.0                        3.0   
+...                    ...              ...                        ...   
+71948                158.0            580.0                        4.0   
+72225                120.0           2197.0                        4.0   
+72316                129.0           1005.0                        5.0   
+72432                 88.0            426.0                        3.0   
+72569                 61.0           1622.0                        2.0   
+
+        Type local  ...  nb_routes_train_1km nb_routes_bus_1km  \
+135         Maison  ...                  0.0               7.0   
+373    Appartement  ...                  2.0              22.0   
+419         Maison  ...                  0.0               2.0   
+589    Appartement  ...                  0.0               3.0   
+618         Maison  ...                  0.0               3.0   
+...            ...  ...                  ...               ...   
+71948       Maison  ...                  0.0               3.0   
+72225       Maison  ...                  0.0               0.0   
+72316       Maison  ...                  0.0               2.0   
+72432       Maison  ...                  0.0               5.0   
+72569       Maison  ...                  0.0               2.0   
+
+      nb_stations_tramway_1km nb_stations_metro_1km nb_stations_train_1km  \
+135                       0.0                   0.0                   0.0   
+373                       0.0                   0.0                   1.0   
+419                       0.0                   0.0                   0.0   
+589                       0.0                   0.0                   0.0   
+618                       0.0                   0.0                   0.0   
+...                       ...                   ...                   ...   
+71948                     0.0                   0.0                   0.0   
+72225                     0.0                   0.0                   0.0   
+72316                     0.0                   0.0                   0.0   
+72432                     0.0                   0.0                   0.0   
+72569                     0.0                   0.0                   0.0   
+
+      nb_stations_bus_1km passage_journalier_tramway_1km  \
+135                   2.0                            0.0   
+373                  14.0                            0.0   
+419                   2.0                            0.0   
+589                   5.0                            0.0   
+618                   1.0                            0.0   
+...                   ...                            ...   
+71948                 1.0                            0.0   
+72225                 0.0                            0.0   
+72316                 1.0                            0.0   
+72432                 3.0                            0.0   
+72569                 5.0                            0.0   
+
+       passage_journalier_metro_1km passage_journalier_train_1km  \
+135                             0.0                          0.0   
+373                             0.0                         89.0   
+419                             0.0                          0.0   
+589                             0.0                          0.0   
+618                             0.0                          0.0   
+...                             ...                          ...   
+71948                           0.0                          0.0   
+72225                           0.0                          0.0   
+72316                           0.0                          0.0   
+72432                           0.0                          0.0   
+72569                           0.0                          0.0   
+
+      passage_journalier_bus_1km  
+135                         91.0  
+373                       1603.0  
+419                         88.0  
+589                        246.0  
+618                          8.0  
+...                          ...  
+71948                       24.0  
+72225                        0.0  
+72316                       13.0  
+72432                       82.0  
+72569                      109.0  
+
+[1061 rows x 46 columns]</code></pre>
+</div>
+</div>
+</section>
+<section id="ajout-du-revenu-médian-par-commune" class="level2">
+<h2 class="anchored" data-anchor-id="ajout-du-revenu-médian-par-commune">Ajout du revenu médian par commune</h2>
+<div id="3845c67c" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> <span class="st">&quot;/home/onyxia/work/projet-python-ds/tests/idf_data2.xlsx&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_excel(path)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df[<span class="st">&#39;UNIT&#39;</span>] <span class="op">==</span> <span class="st">&quot;MEDIANE&quot;</span>]</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.rename(columns<span class="op">=</span>{<span class="st">&quot;CODEGEO&quot;</span>: <span class="st">&quot;Code commune&quot;</span>})</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final <span class="op">=</span> gdf_dvf_final.merge(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">&#39;Code commune&#39;</span>, <span class="st">&#39;OBS_VALUE&#39;</span>]],</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">&#39;Code commune&#39;</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">&#39;left&#39;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> path = <span class="ansi-yellow-fg">&quot;</span><span class="ansi-yellow-fg">/home/onyxia/work/projet-python-ds/tests/idf_data2.xlsx</span><span class="ansi-yellow-fg">&quot;</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> df = <span class="ansi-yellow-bg">pd</span>.read_excel(path)
+<span class="ansi-green-fg">      3</span> df = df[df[<span class="ansi-yellow-fg">&#39;</span><span class="ansi-yellow-fg">UNIT</span><span class="ansi-yellow-fg">&#39;</span>] == <span class="ansi-yellow-fg">&quot;</span><span class="ansi-yellow-fg">MEDIANE</span><span class="ansi-yellow-fg">&quot;</span>]
+<span class="ansi-green-fg">      4</span> df = df.rename(columns={<span class="ansi-yellow-fg">&quot;</span><span class="ansi-yellow-fg">CODEGEO</span><span class="ansi-yellow-fg">&quot;</span>: <span class="ansi-yellow-fg">&quot;</span><span class="ansi-yellow-fg">Code commune</span><span class="ansi-yellow-fg">&quot;</span>})
+
+<span class="ansi-red-fg">NameError</span>: name &#39;pd&#39; is not defined</pre>
+</div>
+</div>
+</div>
+</section>
 <section id="visualisation-du-résultat" class="level2">
 <h2 class="anchored" data-anchor-id="visualisation-du-résultat">Visualisation du résultat</h2>
 <p>Pour illustre les données obtenues, on affiche le premier point de DVF. La carte interactive montre : - Un marqueur bleu pour le point DVF. - Des marqueurs rouges pour les arrêts de transport à moins de 1 km (avec passages journaliers agrégés par mode). - Des marqueurs verts pour les arrêts les plus proches par mode de transport (bus, métro, tramway, train), avec distances en mètres.</p>
-<div id="0ff0be74" class="cell" data-execution_count="3">
+<div id="0ff0be74" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> branca.element <span class="im">import</span> Template, MacroElement</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> script.leaflet_tools <span class="im">import</span> FondCarteLeaflet</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> great_tables <span class="im">as</span> gt</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># affichage des stops within radius on a map for the first point only</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> joined</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> FondCarteLeaflet(afficher_grande_couronne<span class="op">=</span><span class="va">True</span>).get_map()</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>first_point <span class="op">=</span> gdf_dvf.iloc[<span class="dv">0</span>]</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>folium.CircleMarker(</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>[first_point.geometry.y, first_point.geometry.x],</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    popup<span class="op">=</span>first_point[<span class="st">&#39;point_id&#39;</span>],</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">&#39;blue&#39;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>).add_to(m)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, row <span class="kw">in</span> df[df[<span class="st">&#39;point_id&#39;</span>] <span class="op">==</span> first_point[<span class="st">&#39;point_id&#39;</span>]].iterrows():</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    stop <span class="op">=</span> gdf_idfm_small[gdf_idfm_small[<span class="st">&#39;stop_id&#39;</span>] <span class="op">==</span> row[<span class="st">&#39;stop_id&#39;</span>]]</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    stop0 <span class="op">=</span> stop.iloc[<span class="dv">0</span>]</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    route_name <span class="op">=</span> stop0.get(<span class="st">&#39;stop_name&#39;</span>, <span class="va">None</span>)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    folium.Marker(</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        location<span class="op">=</span>[stop0.geometry.y, stop0.geometry.x],</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        tooltip<span class="op">=</span><span class="ss">f&quot;Nearby stop:</span><span class="ch">\n</span><span class="sc">{</span>route_name<span class="sc">}</span><span class="ss">&quot;</span>,</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        icon<span class="op">=</span>folium.Icon(color<span class="op">=</span><span class="st">&#39;red&#39;</span>, icon<span class="op">=</span><span class="st">&#39;info-sign&#39;</span>)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    ).add_to(m)</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>m</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> target <span class="kw">in</span> [<span class="st">&quot;bus&quot;</span>, <span class="st">&quot;metro&quot;</span>, <span class="st">&quot;tramway&quot;</span>, <span class="st">&quot;train&quot;</span>]:</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    stop_id <span class="op">=</span> first_point.get(<span class="ss">f&quot;nearest_</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">_stop_id&quot;</span>)</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    stop <span class="op">=</span> gdf_idfm_small[gdf_idfm_small[<span class="st">&#39;stop_id&#39;</span>] <span class="op">==</span> stop_id]</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    stop0 <span class="op">=</span> stop.iloc[<span class="dv">0</span>]</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    route_name <span class="op">=</span> stop0.get(<span class="st">&#39;stop_name&#39;</span>, <span class="va">None</span>)</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    folium.Marker(</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        location<span class="op">=</span>[stop0.geometry.y, stop0.geometry.x],</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        tooltip<span class="op">=</span><span class="ss">f&quot;Nearest </span><span class="sc">{</span>target<span class="sc">}</span><span class="ss"> stop:</span><span class="ch">\n</span><span class="sc">{</span>route_name<span class="sc">}</span><span class="ss">&quot;</span>,</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        icon<span class="op">=</span>folium.Icon(color<span class="op">=</span><span class="st">&#39;green&#39;</span>, icon<span class="op">=</span><span class="st">&#39;info-sign&#39;</span>)</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    ).add_to(m)</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co"># add legend once (do not recreate inside the loop)</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>legend_html <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="st">{% macro html(this, kwargs) %}</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;div style=&quot;position: fixed; </span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="st">    bottom: 50px; left: 50px; width: 220px; padding:8px;</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="st">    border:2px solid grey; z-index:9999; font-size:14px;</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="st">    background-color:white; box-shadow:2px 2px 6px rgba(0,0,0,0.15);</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;&gt;</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:blue;border-radius:50%;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="st">    Point (DVF sample)&lt;br&gt;</span></span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:red;border-radius:3px;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="st">    Nearby stop (within radius)&lt;br&gt;</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:green;border-radius:3px;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="st">    Nearest stop (by mode)&lt;br&gt;</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;hr style=&quot;margin:6px 0&quot;/&gt;</span></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;small&gt;Hover or click markers for details&lt;/small&gt;</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/div&gt;</span></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="st">{</span><span class="sc">% e</span><span class="st">ndmacro %}</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> MacroElement()</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>legend._template <span class="op">=</span> Template(legend_html)</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>m.get_root().add_child(legend)</span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Sauvegarde de la carte </span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> Path(<span class="st">&quot;assets/maps&quot;</span>)</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>assets.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>m.save(assets <span class="op">/</span> <span class="st">&quot;main1.html&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> branca.element <span class="im">import</span> Template, MacroElement</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> script.leaflet_tools <span class="im">import</span> FondCarteLeaflet</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> great_tables <span class="im">as</span> gt</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># affichage des stops within radius on a map for the first point only</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> joined</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> FondCarteLeaflet(afficher_grande_couronne<span class="op">=</span><span class="va">True</span>).get_map()</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>first_point <span class="op">=</span> gdf_dvf.iloc[<span class="dv">0</span>]</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>folium.CircleMarker(</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>[first_point.geometry.y, first_point.geometry.x],</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    popup<span class="op">=</span>first_point[<span class="st">&#39;point_id&#39;</span>],</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">&#39;blue&#39;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>).add_to(m)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, row <span class="kw">in</span> df[df[<span class="st">&#39;point_id&#39;</span>] <span class="op">==</span> first_point[<span class="st">&#39;point_id&#39;</span>]].iterrows():</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    stop <span class="op">=</span> gdf_idfm_small[gdf_idfm_small[<span class="st">&#39;stop_id&#39;</span>] <span class="op">==</span> row[<span class="st">&#39;stop_id&#39;</span>]]</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    stop0 <span class="op">=</span> stop.iloc[<span class="dv">0</span>]</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    route_name <span class="op">=</span> stop0.get(<span class="st">&#39;stop_name&#39;</span>, <span class="va">None</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    folium.Marker(</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        location<span class="op">=</span>[stop0.geometry.y, stop0.geometry.x],</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        tooltip<span class="op">=</span><span class="ss">f&quot;Nearby stop:</span><span class="ch">\n</span><span class="sc">{</span>route_name<span class="sc">}</span><span class="ss">&quot;</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        icon<span class="op">=</span>folium.Icon(color<span class="op">=</span><span class="st">&#39;red&#39;</span>, icon<span class="op">=</span><span class="st">&#39;info-sign&#39;</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    ).add_to(m)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>m</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> target <span class="kw">in</span> [<span class="st">&quot;bus&quot;</span>, <span class="st">&quot;metro&quot;</span>, <span class="st">&quot;tramway&quot;</span>, <span class="st">&quot;train&quot;</span>]:</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    stop_id <span class="op">=</span> first_point.get(<span class="ss">f&quot;nearest_</span><span class="sc">{</span>target<span class="sc">}</span><span class="ss">_stop_id&quot;</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    stop <span class="op">=</span> gdf_idfm_small[gdf_idfm_small[<span class="st">&#39;stop_id&#39;</span>] <span class="op">==</span> stop_id]</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    stop0 <span class="op">=</span> stop.iloc[<span class="dv">0</span>]</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    route_name <span class="op">=</span> stop0.get(<span class="st">&#39;stop_name&#39;</span>, <span class="va">None</span>)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    folium.Marker(</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        location<span class="op">=</span>[stop0.geometry.y, stop0.geometry.x],</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        tooltip<span class="op">=</span><span class="ss">f&quot;Nearest </span><span class="sc">{</span>target<span class="sc">}</span><span class="ss"> stop:</span><span class="ch">\n</span><span class="sc">{</span>route_name<span class="sc">}</span><span class="ss">&quot;</span>,</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        icon<span class="op">=</span>folium.Icon(color<span class="op">=</span><span class="st">&#39;green&#39;</span>, icon<span class="op">=</span><span class="st">&#39;info-sign&#39;</span>)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    ).add_to(m)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co"># add legend once (do not recreate inside the loop)</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>legend_html <span class="op">=</span> <span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="st">{% macro html(this, kwargs) %}</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;div style=&quot;position: fixed; </span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="st">    bottom: 50px; left: 50px; width: 220px; padding:8px;</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="st">    border:2px solid grey; z-index:9999; font-size:14px;</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="st">    background-color:white; box-shadow:2px 2px 6px rgba(0,0,0,0.15);</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="st">    &quot;&gt;</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:blue;border-radius:50%;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="st">    Point (DVF sample)&lt;br&gt;</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:red;border-radius:3px;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="st">    Nearby stop (within radius)&lt;br&gt;</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;span style=&quot;display:inline-block;width:12px;height:12px;background:green;border-radius:3px;margin-right:8px;vertical-align:middle;&quot;&gt;&lt;/span&gt;</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="st">    Nearest stop (by mode)&lt;br&gt;</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;hr style=&quot;margin:6px 0&quot;/&gt;</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;small&gt;Hover or click markers for details&lt;/small&gt;</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;/div&gt;</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="st">{</span><span class="sc">% e</span><span class="st">ndmacro %}</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;&quot;&quot;</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>legend <span class="op">=</span> MacroElement()</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>legend._template <span class="op">=</span> Template(legend_html)</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>m.get_root().add_child(legend)</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Sauvegarde de la carte </span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> Path(<span class="st">&quot;assets/maps&quot;</span>)</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>assets.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>m.save(assets <span class="op">/</span> <span class="st">&quot;main1.html&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="quarto-figure quarto-figure-center">
@@ -2983,173 +3180,514 @@ var requirejs,require,define;(function(global,setTimeout){var req,s,head,baseEle
 <figcaption>Interactive map</figcaption>
 </figure>
 </div>
-<div id="937f0635" class="cell" data-execution_count="4">
+<div id="937f0635" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># visualisation de first_point avec great_tables</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># visualisation de first_point avec great_tables</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> first_point.reset_index()</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>df.columns <span class="op">=</span> [<span class="st">&#39;Key&#39;</span>, <span class="st">&#39;Value&#39;</span>]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>gt.GT(df).tab_header(title<span class="op">=</span><span class="st">&quot;First DVF Point Details&quot;</span>, subtitle<span class="op">=</span><span class="st">&quot;The last 9 columns correspond to transportation, the others to housing&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> great_tables <span class="im">import</span> GT</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># rebuild the transposed single-row table with groups</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final_filtred <span class="op">=</span> gdf_dvf_final.drop(columns<span class="op">=</span>[<span class="st">&#39;nearest_tramway_stop_id&#39;</span>, <span class="st">&#39;nearest_train_stop_id&#39;</span>, <span class="st">&#39;nearest_bus_stop_id&#39;</span>, <span class="st">&#39;nearest_metro_stop_id&#39;</span>])</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>groups <span class="op">=</span> [<span class="st">&quot;Localisation&quot;</span>] <span class="op">*</span> <span class="dv">6</span> <span class="op">+</span> [<span class="st">&quot;Caractéristiques du logement&quot;</span>] <span class="op">*</span> <span class="dv">5</span> <span class="op">+</span> [<span class="st">&quot;Distances des transports&quot;</span>] <span class="op">*</span> <span class="dv">4</span> <span class="op">+</span> [<span class="st">&quot;Transports dans un rayon de 1km&quot;</span>] <span class="op">*</span> (<span class="bu">len</span>(gdf_dvf_final_filtred.columns) <span class="op">-</span> <span class="dv">15</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># compute stats for each column</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> []</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> gdf_dvf_final_filtred.columns:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pd.api.types.is_numeric_dtype(gdf_dvf_final_filtred[col]):</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        min_s <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        max_s <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        mean_s <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span>mean()<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        quartile_25 <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span>quantile(<span class="fl">0.25</span>)<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        median <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span>median()<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        quartile_75 <span class="op">=</span> <span class="ss">f&quot;</span><span class="sc">{</span>gdf_dvf_final_filtred[col]<span class="sc">.</span>quantile(<span class="fl">0.75</span>)<span class="sc">:,.1f}</span><span class="ss">&quot;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            min_s <span class="op">=</span> <span class="bu">str</span>(gdf_dvf_final_filtred[col].<span class="bu">min</span>())</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            max_s <span class="op">=</span> <span class="bu">str</span>(gdf_dvf_final_filtred[col].<span class="bu">max</span>())</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># crop long strings for display</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">len</span>(min_s) <span class="op">&gt;</span> <span class="dv">7</span>:</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>                min_s <span class="op">=</span> min_s[:<span class="dv">4</span>] <span class="op">+</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">len</span>(max_s) <span class="op">&gt;</span> <span class="dv">7</span>:</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>                max_s <span class="op">=</span> max_s[:<span class="dv">4</span>] <span class="op">+</span> <span class="st">&quot;...&quot;</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>            min_s <span class="op">=</span> max_s <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        mean_s <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        cv_s <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        quartile_25 <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        median <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        quartile_75 <span class="op">=</span> <span class="st">&quot;-&quot;</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    rows.append({<span class="st">&quot;index&quot;</span>: col, <span class="st">&quot;Moyenne&quot;</span>: mean_s, <span class="st">&quot;Min&quot;</span>: min_s, <span class="st">&quot;25%&quot;</span>: quartile_25, <span class="st">&quot;50%&quot;</span>: median, <span class="st">&quot;75%&quot;</span>: quartile_75, <span class="st">&quot;Max&quot;</span>: max_s,})</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>df_stats <span class="op">=</span> pd.DataFrame(rows).assign(group<span class="op">=</span>groups)</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    GT(df_stats)</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    .tab_stub(rowname_col<span class="op">=</span><span class="st">&quot;index&quot;</span>, groupname_col<span class="op">=</span><span class="st">&quot;group&quot;</span>)</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    .tab_header(<span class="st">&quot;Statistiques descriptives des colonnes du jeu de données&quot;</span>)</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div id="lfubrpgycu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div id="qrnkcftlhd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>
-#lfubrpgycu table {
+#qrnkcftlhd table {
 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#lfubrpgycu thead, tbody, tfoot, tr, td, th { border-style: none; }
-tr { background-color: transparent; }
-#lfubrpgycu p { margin: 0; padding: 0; }
-#lfubrpgycu .gt_table { display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #333333; font-size: 16px; font-weight: normal; font-style: normal; background-color: #FFFFFF; width: auto; border-top-style: solid; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; }
-#lfubrpgycu .gt_caption { padding-top: 4px; padding-bottom: 4px; }
-#lfubrpgycu .gt_title { color: #333333; font-size: 125%; font-weight: initial; padding-top: 4px; padding-bottom: 4px; padding-left: 5px; padding-right: 5px; border-bottom-color: #FFFFFF; border-bottom-width: 0; }
-#lfubrpgycu .gt_subtitle { color: #333333; font-size: 85%; font-weight: initial; padding-top: 3px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; border-top-color: #FFFFFF; border-top-width: 0; }
-#lfubrpgycu .gt_heading { background-color: #FFFFFF; text-align: center; border-bottom-color: #FFFFFF; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
-#lfubrpgycu .gt_bottom_border { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
-#lfubrpgycu .gt_col_headings { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; }
-#lfubrpgycu .gt_col_heading { color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: normal; text-transform: inherit; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: bottom; padding-top: 5px; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; overflow-x: hidden; }
-#lfubrpgycu .gt_column_spanner_outer { color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: normal; text-transform: inherit; padding-top: 0; padding-bottom: 0; padding-left: 4px; padding-right: 4px; }
-#lfubrpgycu .gt_column_spanner_outer:first-child { padding-left: 0; }
-#lfubrpgycu .gt_column_spanner_outer:last-child { padding-right: 0; }
-#lfubrpgycu .gt_column_spanner { border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: bottom; padding-top: 5px; padding-bottom: 5px; overflow-x: hidden; display: inline-block; width: 100%; }
-#lfubrpgycu .gt_spanner_row { border-bottom-style: hidden; }
-#lfubrpgycu .gt_group_heading { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; text-align: left; }
-#lfubrpgycu .gt_empty_group_heading { padding: 0.5px; color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; vertical-align: middle; }
-#lfubrpgycu .gt_from_md> :first-child { margin-top: 0; }
-#lfubrpgycu .gt_from_md> :last-child { margin-bottom: 0; }
-#lfubrpgycu .gt_row { padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; margin: 10px; border-top-style: solid; border-top-width: 1px; border-top-color: #D3D3D3; border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3; vertical-align: middle; overflow-x: hidden; }
-#lfubrpgycu .gt_stub { color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; }
-#lfubrpgycu .gt_stub_row_group { color: #333333; background-color: #FFFFFF; font-size: 100%; font-weight: initial; text-transform: inherit; border-right-style: solid; border-right-width: 2px; border-right-color: #D3D3D3; padding-left: 5px; padding-right: 5px; vertical-align: top; }
-#lfubrpgycu .gt_row_group_first td { border-top-width: 2px; }
-#lfubrpgycu .gt_row_group_first th { border-top-width: 2px; }
-#lfubrpgycu .gt_striped { color: #333333; background-color: #F4F4F4; }
-#lfubrpgycu .gt_table_body { border-top-style: solid; border-top-width: 2px; border-top-color: #D3D3D3; border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: #D3D3D3; }
-#lfubrpgycu .gt_grand_summary_row { color: #333333; background-color: #FFFFFF; text-transform: inherit; padding-top: 8px; padding-bottom: 8px; padding-left: 5px; padding-right: 5px; }
-#lfubrpgycu .gt_first_grand_summary_row_bottom { border-top-style: double; border-top-width: 6px; border-top-color: #D3D3D3; }
-#lfubrpgycu .gt_last_grand_summary_row_top { border-bottom-style: double; border-bottom-width: 6px; border-bottom-color: #D3D3D3; }
-#lfubrpgycu .gt_sourcenotes { color: #333333; background-color: #FFFFFF; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #D3D3D3; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; }
-#lfubrpgycu .gt_sourcenote { font-size: 90%; padding-top: 4px; padding-bottom: 4px; padding-left: 5px; padding-right: 5px; text-align: left; }
-#lfubrpgycu .gt_left { text-align: left; }
-#lfubrpgycu .gt_center { text-align: center; }
-#lfubrpgycu .gt_right { text-align: right; font-variant-numeric: tabular-nums; }
-#lfubrpgycu .gt_font_normal { font-weight: normal; }
-#lfubrpgycu .gt_font_bold { font-weight: bold; }
-#lfubrpgycu .gt_font_italic { font-style: italic; }
-#lfubrpgycu .gt_super { font-size: 65%; }
-#lfubrpgycu .gt_footnote_marks { font-size: 75%; vertical-align: 0.4em; position: initial; }
-#lfubrpgycu .gt_asterisk { font-size: 100%; vertical-align: 0; }
+#qrnkcftlhd thead, tbody, tfoot, tr, td, th { border-style: none !important; }
+tr { background-color: transparent !important; }
+#qrnkcftlhd p { margin: 0 !important; padding: 0 !important; }
+#qrnkcftlhd .gt_table { display: table !important; border-collapse: collapse !important; line-height: normal !important; margin-left: auto !important; margin-right: auto !important; color: #333333 !important; font-size: 16px !important; font-weight: normal !important; font-style: normal !important; background-color: #FFFFFF !important; width: auto !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #A8A8A8 !important; border-right-style: none !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #A8A8A8 !important; border-left-style: none !important; border-left-width: 2px !important; border-left-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_caption { padding-top: 4px !important; padding-bottom: 4px !important; }
+#qrnkcftlhd .gt_title { color: #333333 !important; font-size: 125% !important; font-weight: initial !important; padding-top: 4px !important; padding-bottom: 4px !important; padding-left: 5px !important; padding-right: 5px !important; border-bottom-color: #FFFFFF !important; border-bottom-width: 0 !important; }
+#qrnkcftlhd .gt_subtitle { color: #333333 !important; font-size: 85% !important; font-weight: initial !important; padding-top: 3px !important; padding-bottom: 5px !important; padding-left: 5px !important; padding-right: 5px !important; border-top-color: #FFFFFF !important; border-top-width: 0 !important; }
+#qrnkcftlhd .gt_heading { background-color: #FFFFFF !important; text-align: center !important; border-bottom-color: #FFFFFF !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_bottom_border { border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_col_headings { border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_col_heading { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: normal !important; text-transform: inherit !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: bottom !important; padding-top: 5px !important; padding-bottom: 5px !important; padding-left: 5px !important; padding-right: 5px !important; overflow-x: hidden !important; }
+#qrnkcftlhd .gt_column_spanner_outer { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: normal !important; text-transform: inherit !important; padding-top: 0 !important; padding-bottom: 0 !important; padding-left: 4px !important; padding-right: 4px !important; }
+#qrnkcftlhd .gt_column_spanner_outer:first-child { padding-left: 0 !important; }
+#qrnkcftlhd .gt_column_spanner_outer:last-child { padding-right: 0 !important; }
+#qrnkcftlhd .gt_column_spanner { border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; vertical-align: bottom !important; padding-top: 5px !important; padding-bottom: 5px !important; overflow-x: hidden !important; display: inline-block !important; width: 100% !important; }
+#qrnkcftlhd .gt_spanner_row { border-bottom-style: hidden !important; }
+#qrnkcftlhd .gt_group_heading { padding-top: 8px !important; padding-bottom: 8px !important; padding-left: 5px !important; padding-right: 5px !important; color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: middle !important; text-align: left !important; }
+#qrnkcftlhd .gt_empty_group_heading { padding: 0.5px !important; color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; vertical-align: middle !important; }
+#qrnkcftlhd .gt_from_md> :first-child { margin-top: 0 !important; }
+#qrnkcftlhd .gt_from_md> :last-child { margin-bottom: 0 !important; }
+#qrnkcftlhd .gt_row { padding-top: 8px !important; padding-bottom: 8px !important; padding-left: 5px !important; padding-right: 5px !important; margin: 10px !important; border-top-style: solid !important; border-top-width: 1px !important; border-top-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: middle !important; overflow-x: hidden !important; }
+#qrnkcftlhd .gt_stub { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-right-style: solid !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; padding-left: 5px !important; padding-right: 5px !important; }
+#qrnkcftlhd .gt_stub_row_group { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-right-style: solid !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; padding-left: 5px !important; padding-right: 5px !important; vertical-align: top !important; }
+#qrnkcftlhd .gt_row_group_first td { border-top-width: 2px !important; }
+#qrnkcftlhd .gt_row_group_first th { border-top-width: 2px !important; }
+#qrnkcftlhd .gt_striped { color: #333333 !important; background-color: #F4F4F4 !important; }
+#qrnkcftlhd .gt_table_body { border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_grand_summary_row { color: #333333 !important; background-color: #FFFFFF !important; text-transform: inherit !important; padding-top: 8px !important; padding-bottom: 8px !important; padding-left: 5px !important; padding-right: 5px !important; }
+#qrnkcftlhd .gt_first_grand_summary_row_bottom { border-top-style: double !important; border-top-width: 6px !important; border-top-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_last_grand_summary_row_top { border-bottom-style: double !important; border-bottom-width: 6px !important; border-bottom-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_sourcenotes { color: #333333 !important; background-color: #FFFFFF !important; border-bottom-style: none !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 2px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; }
+#qrnkcftlhd .gt_sourcenote { font-size: 90% !important; padding-top: 4px !important; padding-bottom: 4px !important; padding-left: 5px !important; padding-right: 5px !important; text-align: left !important; }
+#qrnkcftlhd .gt_left { text-align: left !important; }
+#qrnkcftlhd .gt_center { text-align: center !important; }
+#qrnkcftlhd .gt_right { text-align: right !important; font-variant-numeric: tabular-nums !important; }
+#qrnkcftlhd .gt_font_normal { font-weight: normal !important; }
+#qrnkcftlhd .gt_font_bold { font-weight: bold !important; }
+#qrnkcftlhd .gt_font_italic { font-style: italic !important; }
+#qrnkcftlhd .gt_super { font-size: 65% !important; }
+#qrnkcftlhd .gt_footnote_marks { font-size: 75% !important; vertical-align: 0.4em !important; position: initial !important; }
+#qrnkcftlhd .gt_asterisk { font-size: 100% !important; vertical-align: 0 !important; }
 </style>
 
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_heading header">
-<td colspan="2" class="gt_heading gt_title gt_font_normal">First DVF Point Details</td>
+<td colspan="7" class="gt_heading gt_title gt_font_normal">Statistiques descriptives des colonnes du jeu de données</td>
 </tr>
-<tr class="gt_heading even">
-<td colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">The last 9 columns correspond to transportation, the others to housing</td>
-</tr>
-<tr class="gt_col_headings header">
-<th id="Key" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Key</th>
-<th id="Value" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Value</th>
+<tr class="gt_col_headings even">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Moyenne" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Moyenne</th>
+<th id="Min" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Min</th>
+<th id="25%" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">25%</th>
+<th id="50%" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">50%</th>
+<th id="75%" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">75%</th>
+<th id="Max" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Max</th>
 </tr>
 </thead>
 <tbody class="gt_table_body">
-<tr class="odd">
-<td class="gt_row gt_left">adresse</td>
-<td class="gt_row gt_left">1 ALL ADRIENNE</td>
+<tr class="gt_group_heading_row odd">
+<th colspan="7" class="gt_group_heading" data-quarto-table-cell-role="th">Localisation</th>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">Date mutation</td>
-<td class="gt_row gt_left">02/01/2024</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">adresse</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">1 AL...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">990 ...</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">Valeur fonciere</td>
-<td class="gt_row gt_left">153000.0</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Code_postal</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">75001</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">95880</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">Code_postal</td>
-<td class="gt_row gt_left">93250</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">dist_centre_paris_m</th>
+<td class="gt_row gt_right">26,702.0</td>
+<td class="gt_row gt_left">137.3</td>
+<td class="gt_row gt_right">8,720.3</td>
+<td class="gt_row gt_right">19,904.6</td>
+<td class="gt_row gt_right">37,967.6</td>
+<td class="gt_row gt_left">138,652.3</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">Commune</td>
-<td class="gt_row gt_left">VILLEMOMBLE</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Department</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">75</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">95</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">Surface reelle bati</td>
-<td class="gt_row gt_left">37.0</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Valeur foncière au mètre carré</th>
+<td class="gt_row gt_right">5,539.3</td>
+<td class="gt_row gt_left">1,000.0</td>
+<td class="gt_row gt_right">3,104.7</td>
+<td class="gt_row gt_right">4,488.8</td>
+<td class="gt_row gt_right">7,544.5</td>
+<td class="gt_row gt_left">20,000.0</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">Surface terrain</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Commune</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">ABLE...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">YERRES</td>
+</tr>
+<tr class="gt_group_heading_row even">
+<th colspan="7" class="gt_group_heading" data-quarto-table-cell-role="th">Caractéristiques du logement</th>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Surface reelle bati</th>
+<td class="gt_row gt_right">72.8</td>
+<td class="gt_row gt_left">9.0</td>
+<td class="gt_row gt_right">40.0</td>
+<td class="gt_row gt_right">65.0</td>
+<td class="gt_row gt_right">91.0</td>
+<td class="gt_row gt_left">300.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Surface terrain</th>
+<td class="gt_row gt_right">199.6</td>
 <td class="gt_row gt_left">0.0</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left">Nombre pieces principales</td>
-<td class="gt_row gt_left">2.0</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left">Code commune</td>
-<td class="gt_row gt_left">77</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left">Type local</td>
-<td class="gt_row gt_left">Appartement</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">262.0</td>
+<td class="gt_row gt_left">9,940.0</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">Valeur foncière au mètre carré</td>
-<td class="gt_row gt_left">4135.135135135135</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Nombre pieces principales</th>
+<td class="gt_row gt_right">3.3</td>
+<td class="gt_row gt_left">1.0</td>
+<td class="gt_row gt_right">2.0</td>
+<td class="gt_row gt_right">3.0</td>
+<td class="gt_row gt_right">4.0</td>
+<td class="gt_row gt_left">20.0</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">search</td>
-<td class="gt_row gt_left">1 ALL ADRIENNE 93250 VILLEMOMBLE</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">Type local</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">Appa...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">Maison</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">result_score</td>
-<td class="gt_row gt_left">0.8528454010695186</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_score_next</th>
+<td class="gt_row gt_right">0.7</td>
+<td class="gt_row gt_left">0.3</td>
+<td class="gt_row gt_right">0.6</td>
+<td class="gt_row gt_right">0.7</td>
+<td class="gt_row gt_right">0.7</td>
+<td class="gt_row gt_left">1.0</td>
+</tr>
+<tr class="gt_group_heading_row even">
+<th colspan="7" class="gt_group_heading" data-quarto-table-cell-role="th">Distances des transports</th>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_label</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">1 Al...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">rue ...</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">geometry</td>
-<td class="gt_row gt_left">POINT (2.506387 48.892543)</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_type</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">hous...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">street</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">point_id</td>
-<td class="gt_row gt_left">0</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_id</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">7510...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">9569...</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">nearest_bus_stop_id</td>
-<td class="gt_row gt_left">IDFM:73300</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_housenumber</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
 </tr>
-<tr class="odd">
-<td class="gt_row gt_left">nearest_bus_dist_m</td>
-<td class="gt_row gt_left">155.389996752238</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left">nearest_metro_stop_id</td>
-<td class="gt_row gt_left">IDFM:426280</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left">nearest_metro_dist_m</td>
-<td class="gt_row gt_left">3222.044282806533</td>
+<tr class="gt_group_heading_row odd">
+<th colspan="7" class="gt_group_heading" data-quarto-table-cell-role="th">Transports dans un rayon de 1km</th>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">nearest_tramway_stop_id</td>
-<td class="gt_row gt_left">IDFM:73312</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_name</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">1 Al...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">rue ...</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">nearest_tramway_dist_m</td>
-<td class="gt_row gt_left">708.3001333321596</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_street</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left">nearest_train_stop_id</td>
-<td class="gt_row gt_left">IDFM:73297</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_postcode</th>
+<td class="gt_row gt_right">85,373.8</td>
+<td class="gt_row gt_left">75,001.0</td>
+<td class="gt_row gt_right">77,144.0</td>
+<td class="gt_row gt_right">91,210.0</td>
+<td class="gt_row gt_right">93,250.0</td>
+<td class="gt_row gt_left">95,880.0</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left">nearest_train_dist_m</td>
-<td class="gt_row gt_left">810.6006014401166</td>
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_city</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">Able...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">Ézan...</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_context</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">75, ...</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">95, ...</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_citycode</th>
+<td class="gt_row gt_right">85,287.2</td>
+<td class="gt_row gt_left">75,101.0</td>
+<td class="gt_row gt_right">77,108.0</td>
+<td class="gt_row gt_right">91,215.0</td>
+<td class="gt_row gt_right">93,048.0</td>
+<td class="gt_row gt_left">95,690.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_oldcitycode</th>
+<td class="gt_row gt_right">86,832.3</td>
+<td class="gt_row gt_left">77,010.0</td>
+<td class="gt_row gt_right">78,551.0</td>
+<td class="gt_row gt_right">91,228.0</td>
+<td class="gt_row gt_right">93,066.0</td>
+<td class="gt_row gt_left">95,282.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_oldcity</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_district</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">result_status</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">ok</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">ok</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">geometry</th>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_right">-</td>
+<td class="gt_row gt_left">-</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nearest_bus_dist_m</th>
+<td class="gt_row gt_right">251.9</td>
+<td class="gt_row gt_left">0.3</td>
+<td class="gt_row gt_right">145.5</td>
+<td class="gt_row gt_right">221.0</td>
+<td class="gt_row gt_right">313.7</td>
+<td class="gt_row gt_left">4,261.1</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nearest_metro_dist_m</th>
+<td class="gt_row gt_right">14,761.2</td>
+<td class="gt_row gt_left">8.2</td>
+<td class="gt_row gt_right">633.1</td>
+<td class="gt_row gt_right">6,343.9</td>
+<td class="gt_row gt_right">22,282.7</td>
+<td class="gt_row gt_left">119,312.3</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nearest_tramway_dist_m</th>
+<td class="gt_row gt_right">9,542.9</td>
+<td class="gt_row gt_left">10.6</td>
+<td class="gt_row gt_right">1,671.6</td>
+<td class="gt_row gt_right">3,995.8</td>
+<td class="gt_row gt_right">11,765.8</td>
+<td class="gt_row gt_left">92,561.1</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nearest_train_dist_m</th>
+<td class="gt_row gt_right">2,152.6</td>
+<td class="gt_row gt_left">10.6</td>
+<td class="gt_row gt_right">935.8</td>
+<td class="gt_row gt_right">1,543.6</td>
+<td class="gt_row gt_right">2,454.0</td>
+<td class="gt_row gt_left">35,427.2</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_routes_tramway_1km</th>
+<td class="gt_row gt_right">0.1</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_left">3.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_routes_metro_1km</th>
+<td class="gt_row gt_right">0.7</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">1.0</td>
+<td class="gt_row gt_left">8.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_routes_train_1km</th>
+<td class="gt_row gt_right">0.4</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">1.0</td>
+<td class="gt_row gt_left">9.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_routes_bus_1km</th>
+<td class="gt_row gt_right">9.3</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">5.0</td>
+<td class="gt_row gt_right">8.0</td>
+<td class="gt_row gt_right">12.0</td>
+<td class="gt_row gt_left">48.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_stations_tramway_1km</th>
+<td class="gt_row gt_right">0.2</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_left">6.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_stations_metro_1km</th>
+<td class="gt_row gt_right">1.1</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">1.0</td>
+<td class="gt_row gt_left">11.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_stations_train_1km</th>
+<td class="gt_row gt_right">0.3</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">1.0</td>
+<td class="gt_row gt_left">3.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">nb_stations_bus_1km</th>
+<td class="gt_row gt_right">9.5</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">6.0</td>
+<td class="gt_row gt_right">9.0</td>
+<td class="gt_row gt_right">13.0</td>
+<td class="gt_row gt_left">27.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">passage_journalier_tramway_1km</th>
+<td class="gt_row gt_right">103.1</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_left">3,329.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">passage_journalier_metro_1km</th>
+<td class="gt_row gt_right">1,069.5</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">920.0</td>
+<td class="gt_row gt_left">14,720.0</td>
+</tr>
+<tr class="odd">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">passage_journalier_train_1km</th>
+<td class="gt_row gt_right">101.0</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">0.0</td>
+<td class="gt_row gt_right">87.0</td>
+<td class="gt_row gt_left">2,506.0</td>
+</tr>
+<tr class="even">
+<th class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th">passage_journalier_bus_1km</th>
+<td class="gt_row gt_right">2,979.1</td>
+<td class="gt_row gt_left">0.0</td>
+<td class="gt_row gt_right">858.0</td>
+<td class="gt_row gt_right">2,282.0</td>
+<td class="gt_row gt_right">4,558.0</td>
+<td class="gt_row gt_left">17,350.0</td>
 </tr>
 </tbody>
 </table>
@@ -3157,17 +3695,6 @@ tr { background-color: transparent; }
 
 </div>
 </div>
-</div>
-<div id="11df893e" class="cell" data-execution_count="5">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ajout d&#39;une colonne departement à gdf_dvf_final</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final[<span class="st">&quot;Department&quot;</span>] <span class="op">=</span> (gdf_dvf_final[<span class="st">&quot;Code_postal&quot;</span>].astype(<span class="bu">int</span>) <span class="op">//</span> <span class="dv">1000</span>).astype(<span class="bu">str</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># enregistrer le GeoDataFrame final en GeoJSON</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>gdf_dvf_final.to_file(<span class="st">&quot;cache/results/logements_transport_final.geojson&quot;</span>, driver<span class="op">=</span><span class="st">&quot;GeoJSON&quot;</span>, encoding<span class="op">=</span><span class="st">&quot;utf-8&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 
 

@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -87,9 +87,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -169,8 +166,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Le but de cette partie est de tester si ce qu’apporte l’ajout du transport pour prédire ta le prix d’un logement</p>
-<div id="82f4ef97" class="cell" data-execution_count="1">
+<div id="82f4ef97" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -206,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       dtype='object')</code></pre>
 </div>
 </div>
-<div id="0a0d1041" class="cell" data-execution_count="2">
+<div id="0a0d1041" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> save_gdf.copy()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># on conserve les dates ulterieurs à 2023</span></span>
@@ -240,7 +236,7 @@ Department
 Name: count, dtype: int64</code></pre>
 </div>
 </div>
-<div id="723bb774" class="cell" data-execution_count="3">
+<div id="723bb774" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
@@ -322,7 +318,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>On ajoute</p>
-<div id="5268150f" class="cell" data-execution_count="4">
+<div id="5268150f" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ajout de l'erreur absolue moyenne au dataframe initial</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>categorical_cols <span class="op">=</span> [</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Type local"</span>,</span>
@@ -407,53 +403,21 @@ Name: count, dtype: int64</code></pre>
 <pre><code>Caractéristiques du bien
 R² train: 0.3386
 R² test: 0.2544
+MSE train: 6992294.6133
+MSE test: 8037757.2686
 Offre de transport
 R² train: 0.8212
 R² test: 0.6973
+MSE train: 1889995.8929
+MSE test: 3263777.2456
 Offre de transport et caractéristiques du bien
 R² train: 0.8486
-R² test: 0.7165</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Regresseurs</th>
-<th data-quarto-table-cell-role="th">R²_train</th>
-<th data-quarto-table-cell-role="th">R²_test</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>Caractéristiques du bien</td>
-<td>0.338568</td>
-<td>0.254436</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>Offre de transport</td>
-<td>0.821217</td>
-<td>0.697260</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>Offre de transport et caractéristiques du bien</td>
-<td>0.848639</td>
-<td>0.716517</td>
-</tr>
-</tbody>
-</table>
-
+R² test: 0.7165
+MSE train: 1600100.8191
+MSE test: 3056170.6080</code></pre>
 </div>
 </div>
-</div>
-<p>On constate que les caracteristiques du logement seules ne suffisent pas (normal, elles sont très peu completes)</p>
-<div id="34375225" class="cell" data-execution_count="5">
+<div id="34375225" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># affichage la distribution des erreurs absolues avec seaborn</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Caractéristiques du bien"</span>)</span>
@@ -465,13 +429,13 @@ R² test: 0.7165</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ml_files/figure-html/cell-6-output-1.png" width="636" height="451" class="figure-img"></p>
+<p><img src="ml_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Lorsqu’on n’utilise que les caractéristiques du logment (Surface, taille du terrain, nombre de pièces) le modèle sous-estime le prix des logements du centre de paris et sur-estime ceux des banlieux.</p>
-<div id="d7addb49" class="cell" data-execution_count="6">
+<div id="d7addb49" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ,{</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#         "short_name":"code_postal_on_logement_transport",</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#         "long_name":"Prediction code postal avec caractéristiques du bien et de transport",</span></span>
@@ -495,7 +459,7 @@ R² test: 0.7165</code></pre>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         "type":"regression",</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#     }</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="767776cd" class="cell" data-execution_count="7">
+<div id="767776cd" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> script.leaflet_tools <span class="im">import</span> creation_heatmap, display_heatmap</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> branca.colormap <span class="im">import</span> LinearColormap</span>
@@ -548,7 +512,7 @@ R² test: 0.7165</code></pre>
 </div>
 <p>Lorsqu’on ajoute l’offre de transport (avec ou sans les caractéristiques du logement) le modèle sous-estime le prix des logements à l’Ouest de Paris et surestime ceux à l’est.</p>
 <p>On remarque en particulier la Seine-Saint-Denis qui est un département bien desservi, mais peu cher. Pour faire de meilleures predictions, il est donc nécessaire d’ajouter des données supplémentaires expliquant ce genre de phénomènes.</p>
-<div id="cc4cd57e" class="cell" data-execution_count="8">
+<div id="cc4cd57e" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml2.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
@@ -560,11 +524,8 @@ R² test: 0.7165</code></pre>
 <figcaption>Interactive map</figcaption>
 </figure>
 </div>
-<div id="40c1b529" class="cell" data-execution_count="9">
+<div id="40c1b529" class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml3.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
-</div>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
