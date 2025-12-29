@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Machine learning – Prix du logement vs offre de transport</title>
+<title>Machine Learning pour la prédiction du prix des logements – Prix du logement vs offre de transport</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
@@ -87,6 +87,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -113,11 +116,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../notebooks/dvf.html"> 
-<span class="menu-text">Traitement DVF</span></a>
+<span class="menu-text">DVF</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../notebooks/idfm.html"> 
-<span class="menu-text">Traitement IDFM</span></a>
+<span class="menu-text">IDFM</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../notebooks/ml.html" aria-current="page"> 
+<span class="menu-text">Prédiction</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../about.html"> 
@@ -141,15 +148,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#entrainement" id="toc-entrainement" class="nav-link active" data-scroll-target="#entrainement">Entrainement</a>
+  <ul class="collapse">
+  <li><a href="#ouverture-des-fichiers" id="toc-ouverture-des-fichiers" class="nav-link" data-scroll-target="#ouverture-des-fichiers">Ouverture des fichiers</a></li>
+  <li><a href="#préparation-du-pipeline" id="toc-préparation-du-pipeline" class="nav-link" data-scroll-target="#préparation-du-pipeline">Préparation du pipeline</a></li>
+  <li><a href="#entrainement-1" id="toc-entrainement-1" class="nav-link" data-scroll-target="#entrainement-1">Entrainement</a></li>
+  <li><a href="#distribution-des-erreurs-relatives" id="toc-distribution-des-erreurs-relatives" class="nav-link" data-scroll-target="#distribution-des-erreurs-relatives">Distribution des erreurs relatives</a></li>
+  </ul></li>
+  <li><a href="#visualisation" id="toc-visualisation" class="nav-link" data-scroll-target="#visualisation">Visualisation</a>
+  <ul class="collapse">
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Machine learning</h1>
+<h1 class="title">Machine Learning pour la prédiction du prix des logements</h1>
 </div>
 
 
@@ -166,340 +189,421 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="82f4ef97" class="cell" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.getcwd().endswith(<span class="st">"notebooks"</span>):</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    os.chdir(<span class="st">'..'</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a sample geospatial dataset</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.read_file(<span class="st">"cache/results/logements_transport_final.geojson"</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows of the GeoDataFrame</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ensure every column is shown</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_columns'</span>, <span class="va">None</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gdf.keys())</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.drop(columns<span class="op">=</span>[<span class="st">"adresse"</span>, <span class="st">"Commune"</span>, <span class="st">"Code commune"</span>, <span class="st">"Valeur fonciere"</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"search"</span>, <span class="st">"result_score"</span>, <span class="st">"point_id"</span>, <span class="st">"nearest_bus_stop_id"</span>, <span class="st">"nearest_metro_stop_id"</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"nearest_train_stop_id"</span>, <span class="st">"nearest_tramway_stop_id"</span>])</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>save_gdf <span class="op">=</span> gdf.copy()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Index(['adresse', 'Date mutation', 'Valeur fonciere', 'Code_postal', 'Commune',
-       'Surface reelle bati', 'Surface terrain', 'Nombre pieces principales',
-       'Code commune', 'Type local', 'Valeur foncière au mètre carré',
-       'search', 'result_score', 'point_id', 'nearest_bus_stop_id',
-       'nearest_bus_dist_m', 'nearest_metro_stop_id', 'nearest_metro_dist_m',
-       'nearest_tramway_stop_id', 'nearest_tramway_dist_m',
-       'nearest_train_stop_id', 'nearest_train_dist_m',
-       'nb_routes_tramway_1km', 'nb_routes_metro_1km', 'nb_routes_train_1km',
-       'nb_routes_bus_1km', 'nb_stations_tramway_1km', 'nb_stations_metro_1km',
-       'nb_stations_train_1km', 'nb_stations_bus_1km',
-       'passage_journalier_tramway_1km', 'passage_journalier_metro_1km',
-       'passage_journalier_train_1km', 'passage_journalier_bus_1km',
-       'Department', 'geometry'],
-      dtype='object')</code></pre>
+<p>Nous avons choisi de mettre en place un <strong>modèle de Machine Learning</strong> pour prédire le prix des logements en fonction des différents regresseurs à disposition.</p>
+<p>Un tel modèle peut avoir de nombreux usages :</p>
+<ol type="1">
+<li><strong>Automatiser l’analyse de grandes quantités de données</strong> : un agent immobilier ou un analyste peut traiter des milliers de biens et de caractéristiques sans calcul manuel fastidieux.</li>
+<li><strong>Identifier les facteurs importants</strong> : le modèle peut montrer quels éléments (surface, nombre de pièces, proximité des transports, revenu médian de la commune…) influencent le plus le prix.</li>
+<li><strong>Prédictions plus fines que la moyenne par quartier</strong> : contrairement à une simple estimation moyenne, le modèle prend en compte les caractéristiques spécifiques du logement et de son environnement.</li>
+<li><strong>Autres applications concrètes</strong> :
+<ul>
+<li>Donner une fourchette de prix indicative pour un bien.</li>
+<li>Comparer rapidement les quartiers ou types de logement.</li>
+<li>Aider à détecter les biens surévalués ou sous-évalués.</li>
+</ul></li>
+</ol>
+<p>Pour ce projet, nous utilisons <strong>Random Forest</strong>, un algorithme non paramétrique robuste qui combine plusieurs arbres de décision pour améliorer la précision des prédictions tout en limitant le risque de surapprentissage.</p>
+<section id="entrainement" class="level1">
+<h1>Entrainement</h1>
+<section id="ouverture-des-fichiers" class="level2">
+<h2 class="anchored" data-anchor-id="ouverture-des-fichiers">Ouverture des fichiers</h2>
+<div id="19225169" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ouverture du GeoDataFrame final</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.getcwd().endswith(<span class="st">"notebooks"</span>):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    os.chdir(<span class="st">'..'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a sample geospatial dataset</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gpd.read_file(<span class="st">"cache/results/logements_transport_final.geojson"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first few rows of the GeoDataFrame</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ensure every column is shown</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_columns'</span>, <span class="va">None</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> gdf.drop(columns<span class="op">=</span>[<span class="st">"adresse"</span>, <span class="st">"Commune"</span>, <span class="st">"Code commune"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"nearest_bus_stop_id"</span>, <span class="st">"nearest_metro_stop_id"</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"nearest_train_stop_id"</span>, <span class="st">"nearest_tramway_stop_id"</span>])</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>save_gdf <span class="op">=</span> gdf.copy()</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> save_gdf.copy()</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 dataframes pour Paris, Petite Couronne, Grande Couronne</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>paris <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>] <span class="op">==</span> <span class="st">"75"</span>].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>pc <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>].isin([<span class="st">"92"</span>, <span class="st">"93"</span>, <span class="st">"94"</span>])].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>gc <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>].isin([<span class="st">"77"</span>, <span class="st">"78"</span>, <span class="st">"91"</span>, <span class="st">"95"</span>])].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="préparation-du-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="préparation-du-pipeline">Préparation du pipeline</h2>
+<div id="c8a2ba1c" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Préparation de la fonction de modélisation Random Forest</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, OneHotEncoder</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor, RandomForestClassifier</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, accuracy_score</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> RF_model(gdf, categorical_cols, numeric_cols, target_col<span class="op">=</span><span class="st">"Valeur foncière au mètre carré"</span>, random_state <span class="op">=</span> <span class="dv">42</span>, test_size<span class="op">=</span><span class="fl">0.2</span>, use_classifier<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filtrage des colonnes utiles</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> gdf.copy()</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># retirer lignes sans target</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[<span class="op">~</span>df[target_col].isna()].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> categorical_cols <span class="op">+</span> numeric_cols</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pipeline de preprocessing</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    numeric_transformer <span class="op">=</span> Pipeline([</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"median"</span>)),</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"scaler"</span>, StandardScaler()),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    categorical_transformer <span class="op">=</span> Pipeline([</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"constant"</span>, fill_value<span class="op">=</span><span class="st">"missing"</span>)),</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"onehot"</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>)),</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    preprocessor <span class="op">=</span> ColumnTransformer([</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"num"</span>, numeric_transformer, numeric_cols),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"cat"</span>, categorical_transformer, categorical_cols),</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    ], remainder<span class="op">=</span><span class="st">"drop"</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestRegressor(random_state<span class="op">=</span>random_state, n_estimators<span class="op">=</span><span class="dv">150</span>, max_depth<span class="op">=</span><span class="dv">15</span>, min_samples_split<span class="op">=</span><span class="dv">5</span>, n_jobs<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> use_classifier:</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span>random_state, n_estimators<span class="op">=</span><span class="dv">150</span>, max_depth<span class="op">=</span><span class="dv">15</span>, min_samples_split<span class="op">=</span><span class="dv">5</span>, n_jobs<span class="op">=</span><span class="dv">1</span>)            </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pipeline complet avec Lasso alpha permet de faire de la sélection de variables</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    pipe <span class="op">=</span> Pipeline([</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"preproc"</span>, preprocessor),</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"model"</span>, model),</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># train/test split</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df[features]</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[target_col].values</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span>test_size, random_state<span class="op">=</span>random_state)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># entraînement</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    pipe.fit(X_train, y_train)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># évaluation</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    train_score <span class="op">=</span> pipe.score(X_train, y_train)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    test_score <span class="op">=</span> pipe.score(X_test, y_test)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"R² train: </span><span class="sc">{</span>train_score<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"R² test: </span><span class="sc">{</span>test_score<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    y_train_pred <span class="op">=</span> pipe.predict(X_train)</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    y_test_pred <span class="op">=</span> pipe.predict(X_test)</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> {<span class="st">"R²_train"</span>: train_score, <span class="st">"R²_test"</span>: test_score}</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> use_classifier:</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"MSE_train"</span>] <span class="op">=</span> mean_squared_error(y_train, y_train_pred)</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"MSE_test"</span>] <span class="op">=</span> mean_squared_error(y_test, y_test_pred)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"MSE train: {result["MSE_train"] :.4f}")</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"MSE test: {result["MSE_test"] :.4f}")</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"Accuracy_train"</span>] <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"Accuracy_test"</span>] <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"Accuracy train: {result["Accuracy_train"] :.4f}")</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"Accuracy test: {result["Accuracy_test"] :.4f}")</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> pipe.predict(X)</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y_pred, result</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="0a0d1041" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gdf <span class="op">=</span> save_gdf.copy()</span>
+</section>
+<section id="entrainement-1" class="level2">
+<h2 class="anchored" data-anchor-id="entrainement-1">Entrainement</h2>
+<div id="7c14e794" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Entraînement des modèles et calcul des erreurs relatives</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># on conserve les dates ulterieurs à 2023</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># conversion en datetime</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>gdf[<span class="st">"Date mutation"</span>] <span class="op">=</span> pd.to_datetime(gdf[<span class="st">"Date mutation"</span>], <span class="bu">format</span><span class="op">=</span><span class="st">"</span><span class="sc">%d</span><span class="st">/%m/%Y"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, mean_absolute_error</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Données comprises entre </span><span class="sc">{</span>gdf[<span class="st">"Date mutation"</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> et </span><span class="sc">{</span>gdf[<span class="st">"Date mutation"</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># on ajoute une colonne "Department" à partir des codes postaux</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>gdf[<span class="st">"Department"</span>] <span class="op">=</span> (gdf[<span class="st">"Code_postal"</span>].astype(<span class="bu">int</span>) <span class="op">//</span> <span class="dv">1000</span>).astype(<span class="bu">str</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gdf[<span class="st">"Department"</span>].value_counts())</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># gdf = gdf.drop(columns=["Code_postal"])</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3 dataframes pour Paris, Petite Couronne, Grande Couronne</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>paris <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>] <span class="op">==</span> <span class="st">"75"</span>].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>pc <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>].isin([<span class="st">"92"</span>, <span class="st">"93"</span>, <span class="st">"94"</span>])].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>gc <span class="op">=</span> gdf[gdf[<span class="st">"Department"</span>].isin([<span class="st">"77"</span>, <span class="st">"78"</span>, <span class="st">"91"</span>, <span class="st">"95"</span>])].drop(columns<span class="op">=</span>[<span class="st">"Department"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Données comprises entre 2024-01-02 00:00:00 et 2024-12-31 00:00:00
-Department
-75    16442
-77     9453
-92     9152
-78     8219
-91     7764
-93     7346
-95     7205
-94     7025
-Name: count, dtype: int64</code></pre>
-</div>
-</div>
-<div id="723bb774" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, OneHotEncoder</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor, RandomForestClassifier</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, accuracy_score</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> RF_model(gdf, categorical_cols, numeric_cols, target_col<span class="op">=</span><span class="st">"Valeur foncière au mètre carré"</span>, random_state <span class="op">=</span> <span class="dv">42</span>, test_size<span class="op">=</span><span class="fl">0.2</span>, use_classifier<span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># filtrage des colonnes utiles</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> gdf.copy()</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># retirer lignes sans target</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[<span class="op">~</span>df[target_col].isna()].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    features <span class="op">=</span> categorical_cols <span class="op">+</span> numeric_cols</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pipeline de preprocessing</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    numeric_transformer <span class="op">=</span> Pipeline([</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"median"</span>)),</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"scaler"</span>, StandardScaler()),</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    ])</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    categorical_transformer <span class="op">=</span> Pipeline([</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"constant"</span>, fill_value<span class="op">=</span><span class="st">"missing"</span>)),</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"onehot"</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>)),</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    ])</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    preprocessor <span class="op">=</span> ColumnTransformer([</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"num"</span>, numeric_transformer, numeric_cols),</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"cat"</span>, categorical_transformer, categorical_cols),</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    ], remainder<span class="op">=</span><span class="st">"drop"</span>)</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> RandomForestRegressor(random_state<span class="op">=</span>random_state, n_estimators<span class="op">=</span><span class="dv">150</span>, max_depth<span class="op">=</span><span class="dv">15</span>, min_samples_split<span class="op">=</span><span class="dv">5</span>, n_jobs<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> use_classifier:</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> RandomForestClassifier(random_state<span class="op">=</span>random_state, n_estimators<span class="op">=</span><span class="dv">150</span>, max_depth<span class="op">=</span><span class="dv">15</span>, min_samples_split<span class="op">=</span><span class="dv">5</span>, n_jobs<span class="op">=</span><span class="dv">1</span>)            </span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pipeline complet avec Lasso alpha permet de faire de la sélection de variables</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    pipe <span class="op">=</span> Pipeline([</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"preproc"</span>, preprocessor),</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"model"</span>, model),</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    ])</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># train/test split</span></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> df[features]</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> df[target_col].values</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span>test_size, random_state<span class="op">=</span>random_state)</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># entraînement</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    pipe.fit(X_train, y_train)</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># évaluation</span></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    train_score <span class="op">=</span> pipe.score(X_train, y_train)</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    test_score <span class="op">=</span> pipe.score(X_test, y_test)</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"R² train: </span><span class="sc">{</span>train_score<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"R² test: </span><span class="sc">{</span>test_score<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>    y_train_pred <span class="op">=</span> pipe.predict(X_train)</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>    y_test_pred <span class="op">=</span> pipe.predict(X_test)</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> {<span class="st">"R²_train"</span>: train_score, <span class="st">"R²_test"</span>: test_score}</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> use_classifier:</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"MSE_train"</span>] <span class="op">=</span> mean_squared_error(y_train, y_train_pred)</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"MSE_test"</span>] <span class="op">=</span> mean_squared_error(y_test, y_test_pred)</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"MSE train: {result["MSE_train"] :.4f}")</span></span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"MSE test: {result["MSE_test"] :.4f}")</span></span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"Accuracy_train"</span>] <span class="op">=</span> accuracy_score(y_train, y_train_pred)</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"Accuracy_test"</span>] <span class="op">=</span> accuracy_score(y_test, y_test_pred)</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"Accuracy train: {result["Accuracy_train"] :.4f}")</span></span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print(f"Accuracy test: {result["Accuracy_test"] :.4f}")</span></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> pipe.predict(X)</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y_pred, result</span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>On ajoute</p>
-<div id="5268150f" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ajout de l'erreur absolue moyenne au dataframe initial</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>categorical_cols <span class="op">=</span> [</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Type local"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Surface reelle bati"</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Surface terrain"</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Nombre pieces principales"</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>numeric_cols_transport <span class="op">=</span> [</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_bus_dist_m"</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_metro_dist_m"</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_tramway_dist_m"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_train_dist_m"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_tramway_1km"</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_metro_1km"</span>,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_train_1km"</span>,</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_bus_1km"</span>,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_tramway_1km"</span>,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_metro_1km"</span>,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_train_1km"</span>,</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_bus_1km"</span>,</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_tramway_1km"</span>,</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_metro_1km"</span>,</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_train_1km"</span>,</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_bus_1km"</span>,</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>list_of_results <span class="op">=</span> []</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>model_metadata <span class="op">=</span> [{</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>:<span class="st">"prix_on_logement"</span>,</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>:<span class="st">"Caractéristiques du bien"</span>,</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>:categorical_cols,</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>:numeric_cols,</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>:<span class="st">"Valeur foncière au mètre carré"</span>,</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>:<span class="st">"regression"</span>,</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    }, {</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>:<span class="st">"prix_on_transport"</span>,</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>:<span class="st">"Offre de transport"</span>,</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>:[],</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>:numeric_cols_transport,</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>:<span class="st">"Valeur foncière au mètre carré"</span>,</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>:<span class="st">"regression"</span>,</span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    },{</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>:<span class="st">"prix_on_logement_transport"</span>,</span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>:<span class="st">"Offre de transport et caractéristiques du bien"</span>,</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>:categorical_cols,</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>:numeric_cols <span class="op">+</span> numeric_cols_transport,</span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>:<span class="st">"Valeur foncière au mètre carré"</span>,</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>:<span class="st">"regression"</span>,</span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    }    </span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metadata <span class="kw">in</span> model_metadata:</span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(metadata[<span class="st">"long_name"</span>])</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    use_classifier <span class="op">=</span> metadata[<span class="st">"type"</span>] <span class="op">==</span> <span class="st">"classification"</span></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    y_pred, result <span class="op">=</span> RF_model(</span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>        gdf,</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>        metadata[<span class="st">"cat"</span>],</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>        metadata[<span class="st">"num"</span>],</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>        target_col<span class="op">=</span>metadata[<span class="st">"target"</span>],</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">42</span>,</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>        test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>        use_classifier<span class="op">=</span>use_classifier</span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    gdf[<span class="st">"relative_error_"</span> <span class="op">+</span> metadata[<span class="st">"short_name"</span>]] <span class="op">=</span> y_pred.astype(<span class="bu">float</span>) <span class="op">-</span> gdf[metadata[<span class="st">"target"</span>]].astype(<span class="bu">float</span>)</span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    list_of_results.append({<span class="st">"model"</span>: metadata[<span class="st">"long_name"</span>], <span class="op">**</span>result})</span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a><span class="co"># absolute errors</span></span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> gdf.keys():</span>
-<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col.startswith(<span class="st">"relative_error_"</span>):</span>
-<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>        gdf[<span class="st">"absolute_"</span> <span class="op">+</span> col[<span class="dv">9</span>:]] <span class="op">=</span> gdf[col].<span class="bu">abs</span>()</span>
-<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="co"># table of R²</span></span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>r2_table <span class="op">=</span> pd.DataFrame(list_of_results)</span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>r2_table[[<span class="st">"model"</span>, <span class="st">"R²_train"</span>, <span class="st">"R²_test"</span>]].rename(columns<span class="op">=</span>{<span class="st">"model"</span>: <span class="st">"Regresseurs"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Définition des colonnes</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>categorical_cols <span class="op">=</span> [</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Type local"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Surface reelle bati"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Surface terrain"</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Nombre pieces principales"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>numeric_cols_transport <span class="op">=</span> [</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_bus_dist_m"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_metro_dist_m"</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_tramway_dist_m"</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nearest_train_dist_m"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_tramway_1km"</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_metro_1km"</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_train_1km"</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_routes_bus_1km"</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_tramway_1km"</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_metro_1km"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_train_1km"</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_stations_bus_1km"</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_tramway_1km"</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_metro_1km"</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_train_1km"</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"passage_journalier_bus_1km"</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>revenu <span class="op">=</span> [<span class="st">"RDB_M"</span>]</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Liste pour stocker les résultats</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>list_of_results <span class="op">=</span> []</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>model_metadata <span class="op">=</span> [</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>: <span class="st">"prix_on_logement"</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>: <span class="st">"Caractéristiques du bien"</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>: categorical_cols,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>: numeric_cols,</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>: <span class="st">"Valeur foncière au mètre carré"</span>,</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"regression"</span>,</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>: <span class="st">"prix_on_transport"</span>,</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>: <span class="st">"Offre de transport"</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>: [],</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>: numeric_cols_transport,</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>: <span class="st">"Valeur foncière au mètre carré"</span>,</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"regression"</span>,</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>: <span class="st">"prix_on_logement_transport"</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>: <span class="st">"Offre de transport et caractéristiques du bien"</span>,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>: categorical_cols,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>: numeric_cols <span class="op">+</span> numeric_cols_transport,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>: <span class="st">"Valeur foncière au mètre carré"</span>,</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"regression"</span>,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">"short_name"</span>: <span class="st">"prix_on_logement_transport_revenu"</span>,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>        <span class="st">"long_name"</span>: <span class="st">"Offre de transport et caractéristiques du bien et niveau de vie median de la commune"</span>,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cat"</span>: categorical_cols,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">"num"</span>: numeric_cols <span class="op">+</span> numeric_cols_transport <span class="op">+</span> revenu,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        <span class="st">"target"</span>: <span class="st">"Valeur foncière au mètre carré"</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>        <span class="st">"type"</span>: <span class="st">"regression"</span>,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Boucle pour entraîner les modèles et calculer l'erreur relative</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metadata <span class="kw">in</span> model_metadata:</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(metadata[<span class="st">"long_name"</span>])</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    use_classifier <span class="op">=</span> metadata[<span class="st">"type"</span>] <span class="op">==</span> <span class="st">"classification"</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    y_pred, result <span class="op">=</span> RF_model(</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>        gdf,</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>        metadata[<span class="st">"cat"</span>],</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>        metadata[<span class="st">"num"</span>],</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>        target_col<span class="op">=</span>metadata[<span class="st">"target"</span>],</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>        test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>        use_classifier<span class="op">=</span>use_classifier</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>    gdf[<span class="st">"relative_error_"</span> <span class="op">+</span> metadata[<span class="st">"short_name"</span>]] <span class="op">=</span> y_pred.astype(<span class="bu">float</span>) <span class="op">-</span> gdf[metadata[<span class="st">"target"</span>]].astype(<span class="bu">float</span>)</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>    list_of_results.append({<span class="st">"model"</span>: metadata[<span class="st">"long_name"</span>], <span class="op">**</span>result})</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcul des erreurs absolues</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> gdf.keys():</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col.startswith(<span class="st">"relative_error_"</span>):</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>        gdf[<span class="st">"absolute_"</span> <span class="op">+</span> col[<span class="dv">9</span>:]] <span class="op">=</span> gdf[col].<span class="bu">abs</span>()</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Table de R²</span></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>r2_table <span class="op">=</span> pd.DataFrame(list_of_results)</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>r2_table <span class="op">=</span> r2_table[[<span class="st">"model"</span>, <span class="st">"R²_train"</span>, <span class="st">"R²_test"</span>]].rename(columns<span class="op">=</span>{<span class="st">"model"</span>: <span class="st">"Regresseurs"</span>})</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>metrics_list <span class="op">=</span> []</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> metadata <span class="kw">in</span> model_metadata:</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    model_name <span class="op">=</span> metadata[<span class="st">"long_name"</span>]</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>    y_true <span class="op">=</span> gdf[metadata[<span class="st">"target"</span>]].astype(<span class="bu">float</span>)</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> gdf[<span class="st">"relative_error_"</span> <span class="op">+</span> metadata[<span class="st">"short_name"</span>]] <span class="op">+</span> y_true  <span class="co"># reconstruire les prédictions</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>    mse <span class="op">=</span> mean_squared_error(y_true, y_pred)</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    rmse <span class="op">=</span> np.sqrt(mse)</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>    mae <span class="op">=</span> mean_absolute_error(y_true, y_pred)</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    rmspe <span class="op">=</span> np.sqrt(np.mean(((y_true <span class="op">-</span> y_pred) <span class="op">/</span> y_true) <span class="op">**</span> <span class="dv">2</span>)) <span class="op">*</span> <span class="dv">100</span>  <span class="co"># en %</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    metrics_list.append({</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Modèle"</span>: model_name,</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MSE"</span>: mse,</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>        <span class="st">"RMSE"</span>: rmse,</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>        <span class="st">"MAE"</span>: mae,</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>        <span class="st">"RMSPE (%)"</span>: rmspe</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a><span class="co"># Création du DataFrame final pour les métriques</span></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>metrics_df <span class="op">=</span> pd.DataFrame(metrics_list)</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>metrics_df <span class="op">=</span> metrics_df[[<span class="st">"Modèle"</span>, <span class="st">"MSE"</span>, <span class="st">"RMSE"</span>, <span class="st">"MAE"</span>, <span class="st">"RMSPE (%)"</span>]]</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Affichage formaté</span></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>metrics_df.style.<span class="bu">format</span>({</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MSE"</span>: <span class="st">"</span><span class="sc">{:,.0f}</span><span class="st">"</span>,</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RMSE"</span>: <span class="st">"</span><span class="sc">{:,.0f}</span><span class="st">"</span>,</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MAE"</span>: <span class="st">"</span><span class="sc">{:,.0f}</span><span class="st">"</span>,</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>    <span class="st">"RMSPE (%)"</span>: <span class="st">"</span><span class="sc">{:.2f}</span><span class="st">"</span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Caractéristiques du bien
-R² train: 0.3386
-R² test: 0.2544
-MSE train: 6992294.6133
-MSE test: 8037757.2686
+R² train: 0.3377
+R² test: 0.2547
 Offre de transport
 R² train: 0.8212
-R² test: 0.6973
-MSE train: 1889995.8929
-MSE test: 3263777.2456
+R² test: 0.6959
 Offre de transport et caractéristiques du bien
-R² train: 0.8486
-R² test: 0.7165
-MSE train: 1600100.8191
-MSE test: 3056170.6080</code></pre>
+R² train: 0.8487
+R² test: 0.7191
+Offre de transport et caractéristiques du bien et niveau de vie median de la commune
+R² train: 0.8669
+R² test: 0.7510</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<style type="text/css">
+</style>
+
+<table id="T_e7e62" class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th class="blank level0" data-quarto-table-cell-role="th">&nbsp;</th>
+<th id="T_e7e62_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Modèle</th>
+<th id="T_e7e62_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">MSE</th>
+<th id="T_e7e62_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">RMSE</th>
+<th id="T_e7e62_level0_col3" class="col_heading level0 col3" data-quarto-table-cell-role="th">MAE</th>
+<th id="T_e7e62_level0_col4" class="col_heading level0 col4" data-quarto-table-cell-role="th">RMSPE (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th id="T_e7e62_level0_row0" class="row_heading level0 row0" data-quarto-table-cell-role="th">0</th>
+<td id="T_e7e62_row0_col0" class="data row0 col0">Caractéristiques du bien</td>
+<td id="T_e7e62_row0_col1" class="data row0 col1">7,209,114</td>
+<td id="T_e7e62_row0_col2" class="data row0 col2">2,685</td>
+<td id="T_e7e62_row0_col3" class="data row0 col3">2,002</td>
+<td id="T_e7e62_row0_col4" class="data row0 col4">72.51</td>
+</tr>
+<tr class="even">
+<th id="T_e7e62_level0_row1" class="row_heading level0 row1" data-quarto-table-cell-role="th">1</th>
+<td id="T_e7e62_row1_col0" class="data row1 col0">Offre de transport</td>
+<td id="T_e7e62_row1_col1" class="data row1 col1">2,168,553</td>
+<td id="T_e7e62_row1_col2" class="data row1 col2">1,473</td>
+<td id="T_e7e62_row1_col3" class="data row1 col3">1,013</td>
+<td id="T_e7e62_row1_col4" class="data row1 col4">41.73</td>
+</tr>
+<tr class="odd">
+<th id="T_e7e62_level0_row2" class="row_heading level0 row2" data-quarto-table-cell-role="th">2</th>
+<td id="T_e7e62_row2_col0" class="data row2 col0">Offre de transport et caractéristiques du bien</td>
+<td id="T_e7e62_row2_col1" class="data row2 col1">1,885,963</td>
+<td id="T_e7e62_row2_col2" class="data row2 col2">1,373</td>
+<td id="T_e7e62_row2_col3" class="data row2 col3">935</td>
+<td id="T_e7e62_row2_col4" class="data row2 col4">38.67</td>
+</tr>
+<tr class="even">
+<th id="T_e7e62_level0_row3" class="row_heading level0 row3" data-quarto-table-cell-role="th">3</th>
+<td id="T_e7e62_row3_col0" class="data row3 col0">Offre de transport et caractéristiques du bien et niveau de vie median de la commune</td>
+<td id="T_e7e62_row3_col1" class="data row3 col1">1,662,901</td>
+<td id="T_e7e62_row3_col2" class="data row3 col2">1,290</td>
+<td id="T_e7e62_row3_col3" class="data row3 col3">850</td>
+<td id="T_e7e62_row3_col4" class="data row3 col4">35.64</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<div id="34375225" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># affichage la distribution des erreurs absolues avec seaborn</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Caractéristiques du bien"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_transport"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Offre de transport"</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement_transport"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Offre de transport et caractéristiques du bien"</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Erreur relative (prédiction - valeur réelle)"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Distribution des erreurs relatives des différents modèles de régression"</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ax.legend()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Les performances de quatre modèles ont été évaluées en utilisant le coefficient de détermination (R²) et différentes mesures d’erreur (MSE, RMSE, MAE, RMSPE).</p>
+<ul>
+<li>Le modèle basé uniquement sur les caractéristiques du bien explique seulement 25 % de la variance des prix, ce qui est faible.<br>
+</li>
+<li>L’ajout de l’offre de transport améliore significativement la performance (R² test ~0.69), ce qui montre que l’accessibilité est un facteur clé des prix immobiliers.<br>
+</li>
+<li>Le modèle complet, intégrant caractéristiques du bien, offre de transport et revenu médian, atteint un R² test de 0.748, indiquant qu’il explique environ 75 % de la variance.<br>
+</li>
+<li>La différence modérée entre R² train et R² test indique que le modèle généralise correctement sans surapprentissage important.</li>
+</ul>
+</section>
+<section id="distribution-des-erreurs-relatives" class="level2">
+<h2 class="anchored" data-anchor-id="distribution-des-erreurs-relatives">Distribution des erreurs relatives</h2>
+<div id="754da9b9" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># affichage la distribution des erreurs absolues avec seaborn</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Caractéristiques du bien"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_transport"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Offre de transport"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement_transport"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Offre de transport et caractéristiques du bien"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(gdf[<span class="st">"relative_error_prix_on_logement_transport_revenu"</span>], fill<span class="op">=</span><span class="va">False</span>, label<span class="op">=</span><span class="st">"Offre de transport et caractéristiques du bien et niveau de vie median de la commune"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Erreur relative (prédiction - valeur réelle)"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Distribution des erreurs relatives des différents modèles de régression"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ml_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="ml_files/figure-html/cell-5-output-1.png" width="672" height="451" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
+<ul>
+<li>Les erreurs diminuent de manière significative à mesure que l’on enrichit le modèle, comme l’illustre la baisse continue du MAE. Celui-ci passe de 2 003 pour le modèle basé uniquement sur les caractéristiques du bien à 849 pour le modèle complet. Cela signifie qu’en moyenne, l’erreur absolue de prédiction est divisée par plus de deux lorsque l’on intègre l’offre de transport et le revenu médian de la commune.</li>
+<li>Pour le modèle le plus complet, un MAE de 849 indique qu’un bien dont le prix réel est par exemple de 5 000 (dans l’unité de mesure utilisée) est prédit en moyenne avec une erreur d’environ ±850. De même, pour un bien valorisé à 10 000, l’erreur moyenne reste du même ordre de grandeur absolu, ce qui peut représenter une incertitude significative en valeur relative.</li>
+<li>Bien que le modèle complet réduise l’erreur relative (RMSPE) à environ 36 %, ce niveau de précision est adapté à des analyses de tendances globales ou à des comparaisons entre zones géographiques, mais reste insuffisant pour des prédictions précises à l’échelle d’un bien immobilier individuel, notamment dans un contexte d’aide à la décision pour la fixation d’un prix de vente.</li>
+</ul>
+</section>
+</section>
+<section id="visualisation" class="level1">
+<h1>Visualisation</h1>
 <p>Lorsqu’on n’utilise que les caractéristiques du logment (Surface, taille du terrain, nombre de pièces) le modèle sous-estime le prix des logements du centre de paris et sur-estime ceux des banlieux.</p>
-<div id="d7addb49" class="cell" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ,{</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#         "short_name":"code_postal_on_logement_transport",</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#         "long_name":"Prediction code postal avec caractéristiques du bien et de transport",</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#         "cat":categorical_cols,</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         "num":numeric_cols + numeric_cols_transport,</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#         "target":"Code_postal",</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         "type":"regression",</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     },{</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         "short_name":"prix_on_code_postal",</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#         "long_name":"Prediction prix au m² avec code postal",</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         "cat":["Code_postal"],</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#         "num":[],</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         "target":"Valeur foncière au mètre carré",</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#         "type":"regression",</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     },{</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#         "short_name":"prix_on_code_postal_logement",</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#         "long_name":"Prediction prix au m² avec code postal et caractéristiques du bien",</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#         "cat":["Code_postal"] + categorical_cols,</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#         "num":numeric_cols,</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#         "target":"Valeur foncière au mètre carré",</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         "type":"regression",</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#     }</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="767776cd" class="cell" data-execution_count="32">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> script.leaflet_tools <span class="im">import</span> creation_heatmap, display_heatmap</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> branca.colormap <span class="im">import</span> LinearColormap</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> heatmap_relative_error(gdf, target_col):</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    grid <span class="op">=</span> creation_heatmap(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        gdf,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        cell_size<span class="op">=</span><span class="dv">1000</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        target_value_col<span class="op">=</span>target_col,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        min_points_per_cell<span class="op">=</span><span class="dv">5</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    vmin <span class="op">=</span> grid[<span class="st">"moyenne"</span>].<span class="bu">min</span>()</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    vmax <span class="op">=</span> grid[<span class="st">"moyenne"</span>].<span class="bu">max</span>()</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    cmap <span class="op">=</span> LinearColormap(</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                colors<span class="op">=</span>[<span class="st">"blue"</span>, <span class="st">"#d9d9d9"</span>, <span class="st">"red"</span>],</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                vmin<span class="op">=</span>vmin,</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                vmax<span class="op">=</span>vmax,</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                caption<span class="op">=</span><span class="st">"Erreur relative moyenne"</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> display_heatmap(</span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        grid,</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        target_value_col<span class="op">=</span><span class="st">"moyenne"</span>,</span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        cmap<span class="op">=</span>cmap,</span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        default_cmap_caption<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        legend<span class="op">=</span>[<span class="st">"Erreur relative"</span>, <span class="st">"Nombre de points"</span>]</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation"</span>)</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> m</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> Path(<span class="st">"assets/maps"</span>)</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>assets.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement"</span>).save(assets <span class="op">/</span> <span class="st">"ml1.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="df5183dd" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> script.leaflet_tools <span class="im">import</span> creation_heatmap, display_heatmap</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> branca.colormap <span class="im">import</span> LinearColormap</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> heatmap_relative_error(gdf, target_col):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    grid <span class="op">=</span> creation_heatmap(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        gdf,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        cell_size<span class="op">=</span><span class="dv">1000</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        target_value_col<span class="op">=</span>target_col,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        min_points_per_cell<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    max_abs <span class="op">=</span> np.<span class="bu">max</span>(np.<span class="bu">abs</span>(grid[<span class="st">"moyenne"</span>]))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    vmin, vmax <span class="op">=</span> <span class="op">-</span>max_abs, max_abs</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    cmap <span class="op">=</span> LinearColormap(</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                colors<span class="op">=</span> [<span class="st">"darkblue"</span>, <span class="st">"blue"</span>, <span class="st">"#d9d9d9"</span>, <span class="st">"red"</span>, <span class="st">"darkred"</span>],</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                vmin<span class="op">=</span>vmin,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                vmax<span class="op">=</span>vmax,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                caption<span class="op">=</span><span class="st">"Erreur relative moyenne"</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> display_heatmap(</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        grid,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        target_value_col<span class="op">=</span><span class="st">"moyenne"</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        cmap<span class="op">=</span>cmap,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        default_cmap_caption<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        legend<span class="op">=</span>[<span class="st">"Erreur relative"</span>, <span class="st">"Nombre de points"</span>]</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation"</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> m</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> Path(<span class="st">"assets/maps"</span>)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>assets.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement"</span>).save(assets <span class="op">/</span> <span class="st">"ml1.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
 </div>
@@ -512,29 +616,38 @@ MSE test: 3056170.6080</code></pre>
 </div>
 <p>Lorsqu’on ajoute l’offre de transport (avec ou sans les caractéristiques du logement) le modèle sous-estime le prix des logements à l’Ouest de Paris et surestime ceux à l’est.</p>
 <p>On remarque en particulier la Seine-Saint-Denis qui est un département bien desservi, mais peu cher. Pour faire de meilleures predictions, il est donc nécessaire d’ajouter des données supplémentaires expliquant ce genre de phénomènes.</p>
-<div id="cc4cd57e" class="cell" data-execution_count="34">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml2.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="f237194b" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml2.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
 </div>
 </div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="../assets/maps/ml2.html"><img src="../assets/maps/ml2.png" class="img-fluid figure-img"></a></p>
-<figcaption>Interactive map</figcaption>
-</figure>
+<div id="38739f6c" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml3.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
 </div>
-<div id="40c1b529" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement_transport"</span>).save(assets <span class="op">/</span> <span class="st">"ml3.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="../assets/maps/ml3.html"><img src="../assets/maps/ml3.png" class="img-fluid figure-img"></a></p>
-<figcaption>Interactive map</figcaption>
-</figure>
+<div id="7be02f8f" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>heatmap_relative_error(gdf, target_col<span class="op">=</span><span class="st">"relative_error_prix_on_logement_transport_revenu"</span>).save(assets <span class="op">/</span> <span class="st">"ml4.html"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Heatmap de l'erreur relative moyenne, rouge = sur-estimation, bleu = sous-estimation</code></pre>
 </div>
+</div>
+<p>L’ajout du revenu médian par commune comme variable explicative permet de mieux capturer les différences socio-économiques entre les zones et améliore les prévisions. En conséquence, la tendance à surestimer systématiquement les prix dans l’est ou à les sous-estimer dans l’ouest, observée avec les modèles précédents, disparaît. Les prédictions deviennent ainsi plus équilibrées et moins biaisées géographiquement, reflétant mieux la réalité du marché immobilier au-delà d’un simple effet Est-Ouest.</p>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Le modèle le plus complet permet d’expliquer 75 % de la variance des prix immobiliers et réduit l’erreur relative à 36 %. De plus, il permets d’éviter les biais géographique. Il est donc utilisable pour des analyses macro ou des tendances, mais reste insuffisant pour prédire précisément le prix d’un bien individuel.</p>
+<p>L’ajout de nouvelles variables et l’utilisation de modèles plus flexibles pourraient encore améliorer la précision. Par exemple :</p>
+<ul>
+<li>la proximité des écoles, commerces, espaces verts,</li>
+<li>l’âge et la qualité du logement</li>
+<li>le dynamisme de la zone (démographique, économique, …)</li>
+</ul>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
