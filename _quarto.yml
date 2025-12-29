@@ -24,10 +24,12 @@ website:
     left:
       - text: Analyse
         href: notebooks/main.ipynb
-      - text: Traitement DVF
+      - text: DVF
         href: notebooks/dvf.ipynb
-      - text: Traitement IDFM
+      - text: IDFM
         href: notebooks/idfm.ipynb
+      - text: Prédiction
+        href: notebooks/ml.ipynb
       - text: About
         href: about.qmd
     right:

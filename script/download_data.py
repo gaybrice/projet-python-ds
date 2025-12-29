@@ -38,9 +38,7 @@ def get_valeur_fonciere(force_download=False):
 
 # Télécharge des fichiers ZIP depuis les URL url_list et les extrait  
 def download_unzip(url_list=URL_LIST, dossier_temp="cache", force_download=False):
-    if os.path.isdir(dossier_temp) and not force_download:
-        print("Utilisation des données en cache dans", dossier_temp)
-    else:
+    if not (os.path.isdir(dossier_temp) and not force_download):
         os.makedirs(dossier_temp, exist_ok=True)
         for url in url_list:
             print(f"Téléchargement depuis {url}")
@@ -49,10 +47,10 @@ def download_unzip(url_list=URL_LIST, dossier_temp="cache", force_download=False
                 r.raise_for_status()
                 # On lit directement le contenu dans un buffer mémoire
                 file_like_object = io.BytesIO(r.content)
-        print("Extraction des ZIP")
+        # print("Extraction des ZIP")
         with zipfile.ZipFile(file_like_object) as zip_ref:
             zip_ref.extractall(dossier_temp)
-        print("Extraction terminée")
+        # print("Extraction terminée")
 
     return [os.path.join(dossier_temp, f) 
             for f in os.listdir(dossier_temp)
